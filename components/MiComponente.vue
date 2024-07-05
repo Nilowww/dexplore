@@ -21,26 +21,31 @@ const props = withDefaults(
 const valor1 = ref(Math.round(Math.random() * 100));
 const valor2 = ref(Math.round(Math.random() * 100));
 
-const resultado = computed(() => {
+function calcular(value1: number, value2: number, type: string) {
   let result = 0;
-  switch (props.type) {
+  switch (type) {
     case "add":
       result =
-        parseInt(valor1.value.toString()) + parseInt(valor2.value.toString());
+        parseInt(value1.toString()) + parseInt(value2.toString());
       break;
     case "multiply":
       result =
-        parseInt(valor1.value.toString()) * parseInt(valor2.value.toString());
+        parseInt(value1.toString()) * parseInt(value2.toString());
       break;
     case "substraction":
       result =
-        parseInt(valor1.value.toString()) - parseInt(valor2.value.toString());
+        parseInt(value1.toString()) - parseInt(value2.toString());
       break;
     case "division":
       result =
-        parseInt(valor1.value.toString()) / parseInt(valor2.value.toString());
+        parseInt(value1.toString()) / parseInt(value2.toString());
       break;
   }
+  return result;
+}
+
+const resultado = computed(() => {
+    const result = calcular(valor1.value, valor2.value, props.type)
   if (result > props.max) {
     return "Error";
   }
