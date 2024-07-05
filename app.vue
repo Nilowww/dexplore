@@ -5,6 +5,7 @@
     <MiComponente type="substraction"/>
     <MiComponente type="division"/>
     <MiComponente type="multiply"/>
+    <MiComponente type="division"/>
     <ComponenteSuma />
   </div>
 </template>
