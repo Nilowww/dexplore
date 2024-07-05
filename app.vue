@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MiComponente />
+    <MiComponente :max="10"/>
     <MiComponente />
     <MiComponente />
     <MiComponente />
