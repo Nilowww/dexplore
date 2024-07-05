@@ -1,9 +1,9 @@
 <template>
   <div>
-    <MiComponente :max="10"/>
-    <MiComponente />
-    <MiComponente />
-    <MiComponente />
+    <MiComponente :max="10" type="add"/>
+    <MiComponente type="multiply"/>
+    <MiComponente type="substraction"/>
+    <MiComponente type="division"/>
     <MiComponente />
   </div>
 </template>
