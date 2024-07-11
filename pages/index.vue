@@ -6,15 +6,17 @@
           <v-skeleton-loader type="card"></v-skeleton-loader>
         </v-col>
         <v-col cols="3" v-else v-for="pokemon in pokemons" :key="pokemon.name">
-          <v-card class="pa-2" outlined>
-            <v-img :src="getImage(pokemon)" width="100%" />
-            <v-divider></v-divider>
-            <div class="text-center">
-              <div class="pokemon-name">
-                {{ pokemon.name }}
+          <NuxtLink :to="getPokemonID(pokemon)">
+            <v-card class="pa-2" outlined>
+              <v-img :src="getImage(pokemon)" width="100%" />
+              <v-divider></v-divider>
+              <div class="text-center">
+                <div class="pokemon-name">
+                  {{ pokemon.name }}
+                </div>
               </div>
-            </div>
-          </v-card>
+            </v-card>
+          </NuxtLink>
         </v-col>
       </v-row>
     </v-container>
@@ -40,12 +42,16 @@ onMounted(() => {
 });
 
 function getImage(pokemon: IPokemonShort) {
+  const id= getPokemonID(pokemon);
+  const imageURL = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+  return imageURL;
+}
+
+function getPokemonID(pokemon: IPokemonShort) {
   const id = pokemon.url
     .replace("https://pokeapi.co/api/v2/pokemon/", "")
     .replace("/", "");
-  const imageURL = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-
-  return imageURL;
+  return id;
 }
 </script>
 
