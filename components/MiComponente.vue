@@ -1,7 +1,7 @@
 <template>
   <p>{{ type }}</p>
-  <input v-model="valor1" /> {{ valor1 }} <br />
-  <input v-model="valor2" /> {{ valor2 }} <br />
+  <v-text-field v-model="valor1" /> {{ valor1 }} <br />
+  <v-text-field v-model="valor2" /> {{ valor2 }} <br />
   <p>{{ resultado }}</p>
   <hr />
 </template>
