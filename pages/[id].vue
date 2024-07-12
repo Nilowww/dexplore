@@ -5,7 +5,7 @@
         <v-img
           width="100%"
           contain
-          class="mb-3"
+          class="mb-3 pokemon-image"
           :src="
             pokemon?.sprites.other['official-artwork']?.front_default ||
             undefined
@@ -13,6 +13,15 @@
         />
         <h1 class="headline">{{ pokemon?.name }}</h1>
         <p class="subtitle-1">ID: {{ pokemon?.id }}</p>
+        <div class="type">
+          <v-chip
+            v-for="type in pokemon?.types"
+            :color="getTypeColor(type.type.name)"
+            class="mr-2"
+          >
+            {{ type.type.name }}
+          </v-chip>
+        </div>
       </v-col>
       <v-col cols="12" md="8">
         <div class="details">
@@ -59,12 +68,63 @@ async function handleClick() {
   pokemon.value = value;
 }
 
+function getTypeColor(type: string): string {
+  switch (type) {
+    case 'grass':
+      return 'success';
+    case 'fire':
+      return 'error';
+    case 'water':
+      return 'primary';
+    case 'electric':
+      return 'yellow darken-2';
+    case 'ice':
+      return 'light-blue';
+    case 'fighting':
+      return 'deep-orange darken-2';
+    case 'poison':
+      return 'purple darken-2';
+    case 'ground':
+      return 'brown darken-2';
+    case 'flying':
+      return 'blue-grey darken-1';
+    case 'psychic':
+      return 'pink darken-2';
+    case 'bug':
+      return 'lime darken-3';
+    case 'rock':
+      return 'orange darken-3';
+    case 'ghost':
+      return 'indigo darken-4';
+    case 'dragon':
+      return 'deep-purple darken-4';
+    case 'dark':
+      return 'grey darken-3';
+    case 'steel':
+      return 'blue-grey darken-2';
+    case 'fairy':
+      return 'pink lighten-2';
+    default:
+      return 'grey';
+  }
+}
+
 onMounted(() => {
   handleClick();
 });
 </script>
 
 <style scoped>
+.pokemon-image {
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.type {
+  margin-top: 10px;
+}
+
 .details {
   padding: 20px;
   background-color: #f0f0f0;
@@ -91,5 +151,10 @@ onMounted(() => {
 @keyframes fadeIn {
   0% { opacity: 0; transform: translateY(-20px); }
   100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.8); }
+  100% { transform: scale(1); }
 }
 </style>

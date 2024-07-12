@@ -22,6 +22,7 @@ export interface IPokemon {
   species: ISpeciesShort;
   moves: IMovesShort[];
   sprites: ISprites;
+  types: ITypesShort[];
 }
 
 export interface IAbilityShort {
@@ -58,5 +59,13 @@ export interface ISprites {
 export interface IMovesShort {
   move: {
     name: string;
+  }
+}
+
+export interface ITypesShort {
+  slot: number;
+  type: {
+    name: string;
+    url: string;
   }
 }
