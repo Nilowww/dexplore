@@ -1,42 +1,31 @@
 export interface IList<T extends any> {
   count: number;
-  next: string | null;
-  previous: string | null;
   results: T[];
 }
 
 export interface IPokemonShort {
   name: string;
-  url: string;
+  id: number;
+  sprites: ISprites;
+  types: string[]
 }
 
-export interface IPokemon {
-  name: string;
-  id: number;
+export interface IPokemon extends IPokemonShort {
   base_experience: number;
-  height: number;
-  is_default: boolean;
-  order: number;
   weight: number;
   abilities: IAbilityShort[];
   species: ISpeciesShort;
   moves: IMovesShort[];
-  sprites: ISprites;
-  types: ITypesShort[];
 }
 
 export interface IAbilityShort {
   ability: {
     name: string;
-    url: string;
   };
-  is_hidden: boolean;
-  slot: number;
 }
 
 export interface ISpeciesShort {
   name: string;
-  url: string;
 }
 
 export interface ISprites {
@@ -63,7 +52,6 @@ export interface IMovesShort {
 }
 
 export interface ITypesShort {
-  slot: number;
   type: {
     name: string;
     url: string;

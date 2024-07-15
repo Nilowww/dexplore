@@ -20,10 +20,21 @@
           <v-skeleton-loader type="card"></v-skeleton-loader>
         </v-col>
         <v-col cols="3" v-else v-for="pokemon in pokemons" :key="pokemon.name">
-          <NuxtLink :to="getPokemonID(pokemon)">
+          <NuxtLink :to="String(pokemon.id)">
             <v-card class="pa-2" outlined>
-              <v-img :src="getImage(pokemon)" width="100%" />
+              <v-img
+                :src="pokemon.sprites.other['official-artwork']?.front_default || getImage(pokemon)"
+                width="100%"
+              />
               <v-divider></v-divider>
+              <div class="d-flex justify-center ga-2 mt-2">
+                <v-chip class="text-decoration-none"
+                  v-for="type in pokemon.types"
+                  :color="getTypeColor(type)"
+                >
+                  {{ type }}
+                </v-chip>
+              </div>
               <div class="text-center">
                 <div class="pokemon-name">
                   {{ pokemon.name }}
@@ -48,9 +59,8 @@ const page = ref(1);
 const totalPokemon = ref(0);
 
 const offset = computed(() => {
-  return (page.value-1)*20
+  return (page.value - 1) * 20;
 });
-
 
 const totalPage = computed(() => {
   return Math.ceil(totalPokemon.value / 20);
@@ -58,7 +68,9 @@ const totalPage = computed(() => {
 
 async function handleClick() {
   loaded.value = false;
-  const value = (await getData(`/pokemon?offset=${offset.value}`)) as IList<IPokemonShort>;
+  const value = (await getData(
+    `/pokemon?offset=${offset.value}`
+  )) as IList<IPokemonShort>;
   totalPokemon.value = value.count;
   pokemons.value = value.results;
   loaded.value = true;
@@ -73,16 +85,8 @@ onMounted(() => {
 });
 
 function getImage(pokemon: IPokemonShort) {
-  const id = getPokemonID(pokemon);
-  const imageURL = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+  const imageURL = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
   return imageURL;
-}
-
-function getPokemonID(pokemon: IPokemonShort) {
-  const id = pokemon.url
-    .replace("https://pokeapi.co/api/v2/pokemon/", "")
-    .replace("/", "");
-  return id;
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="pokemon">
     <v-row>
       <v-col cols="12" md="4" class="text-center">
         <v-img
@@ -7,8 +7,7 @@
           contain
           class="mb-3 pokemon-image"
           :src="
-            pokemon?.sprites.other['official-artwork']?.front_default ||
-            undefined
+            pokemon?.sprites.other['official-artwork']?.front_default || getImage(pokemon)
           "
         />
         <h1 class="headline">{{ pokemon?.name }}</h1>
@@ -16,10 +15,10 @@
         <div class="type">
           <v-chip
             v-for="type in pokemon?.types"
-            :color="getTypeColor(type.type.name)"
+            :color="getTypeColor(type)"
             class="mr-2"
           >
-            {{ type.type.name }}
+            {{ type }}
           </v-chip>
         </div>
       </v-col>
