@@ -21,8 +21,13 @@ function processResponse(object: IPokemonShortGQLResponse): IList<IPokemonShort>
 
 export default defineEventHandler(async (event) => {
   const params = getQuery(event);
-  const query = `query getPokemons($offset: Int) {
-  results: pokemon_v2_pokemon(limit: 20, offset: $offset) {
+  const query = `query getPokemons($offset: Int, $name: String = "%%") {
+  count: pokemon_v2_pokemon_aggregate(where: {name: {_like: $name}}) {
+    aggregate {
+      count
+    }
+  }
+  results: pokemon_v2_pokemon(limit: 20, offset: $offset, where: {name: {_like: $name}}) {
     name
     id
     sprites: pokemon_v2_pokemonsprites {
@@ -34,13 +39,8 @@ export default defineEventHandler(async (event) => {
       }
     }
   }
-  count: pokemon_v2_pokemon_aggregate {
-    aggregate {
-      count
-    }
-  }
-}`
-  const response = await fetchGraphQL(query, { offset: params.offset }, "getPokemons") as IPokemonShortGQLResponse;
+}
+`
+  const response = await fetchGraphQL(query, { offset: params.offset, name: `%${params.name || ''}%` }, "getPokemons") as IPokemonShortGQLResponse;
   return processResponse(response);
-}); 
-
+});
