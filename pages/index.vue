@@ -30,7 +30,40 @@
           ></v-btn>
         </v-col>
       </v-row>
+      <v-row v-if="showSearch">
+        <v-col cols="12">
+          <div class="d-flex flex-wrap justify-center ga-2">
+            <v-chip
+              @click="clearFilter"
+              :class="{ 'chip-selected': isEmpty(selectedType) }"
+              color="grey lighten-2"
+            >
+              All
+            </v-chip>
+            <v-chip
+              v-for="type in types"
+              :key="type"
+              :color="getTypeColor(type)"
+              @click="selectType(type)"
+              :prepend-icon="
+                selectedType.includes(type)
+                  ? 'mdi-checkbox-marked'
+                  : 'mdi-checkbox-blank-outline'
+              "
+            >
+              {{ type }}
+            </v-chip>
+          </div>
+        </v-col>
+      </v-row>
       <v-row>
+        <v-col
+          v-if="showSearch && loaded && !pokemons.length"
+          cols="12"
+          class="text-center"
+        >
+          No pokemons found
+        </v-col>
         <v-col cols="3" v-for="index in 12" :key="index" v-if="!loaded">
           <v-skeleton-loader type="card"></v-skeleton-loader>
         </v-col>
@@ -68,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { debounce } from "lodash";
+import { debounce, isEmpty } from "lodash";
 import { ref, watch } from "vue";
 import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
@@ -79,15 +112,39 @@ const page = ref(1);
 const totalPokemon = ref(0);
 const showSearch = ref(false);
 const pokemonName = ref("");
+const selectedType = ref<string[]>([]);
+const types = [
+  "grass",
+  "poison",
+  "fire",
+  "flying",
+  "water",
+  "bug",
+  "normal",
+  "electric",
+  "ground",
+  "fairy",
+  "fighting",
+  "psychic",
+  "rock",
+  "ice",
+  "dragon",
+  "ghost",
+  "steel",
+  "dark",
+];
 
 const searchDebounced = debounce(() => {
-  handleClick();
+  if (page.value > 1) {
+    page.value = 1;
+  } else {
+    handleClick();
+  }
 }, 500);
 
 function toggleSearch() {
   showSearch.value = !showSearch.value;
 }
-
 
 const offset = computed(() => {
   return (page.value - 1) * 20;
@@ -100,12 +157,16 @@ const totalPage = computed(() => {
 async function handleClick() {
   loaded.value = false;
 
-  const params: Record<string, string> = {
+  const params: Record<string, any> = {
     offset: String(offset.value),
   };
 
   if (pokemonName.value.length > 0) {
     params.name = pokemonName.value;
+  }
+
+  if (!isEmpty(selectedType.value)) {
+    params.type = selectedType.value.join();
   }
 
   const value = (await getData(
@@ -114,6 +175,26 @@ async function handleClick() {
   totalPokemon.value = value.count;
   pokemons.value = value.results;
   loaded.value = true;
+}
+
+function selectType(type: string) {
+  const hasType = selectedType.value.includes(type);
+
+  if (hasType) {
+    selectedType.value = selectedType.value.filter(
+      (currentType) => currentType !== type
+    );
+  } else {
+    selectedType.value = [...selectedType.value, type];
+  }
+  page.value = 1;
+  handleClick();
+}
+
+function clearFilter() {
+  selectedType.value = [];
+  page.value = 1;
+  handleClick();
 }
 
 watch(page, () => {
@@ -131,6 +212,11 @@ function getImage(pokemon: IPokemonShort) {
 </script>
 
 <style scoped>
+.chip-selected {
+  border: 2px solid black;
+  font-weight: bold;
+}
+
 .v-card {
   text-align: center;
 }
