@@ -1,48 +1,88 @@
 <template>
   <v-container v-if="pokemon">
     <v-row>
+      <v-col cols="12">
+        <v-btn @click="goBack" class="back-button"> Back </v-btn>
+      </v-col>
+    </v-row>
+
+    <!-- Pokemon Details -->
+    <v-row>
       <v-col cols="12" md="4" class="text-center">
         <v-img
           width="100%"
           contain
-          class="mb-3 pokemon-image"
+          class="pokemon-image"
           :src="
-            pokemon?.sprites.other['official-artwork']?.front_default || getImage(pokemon)
+            pokemon?.sprites.other['official-artwork']?.front_default ||
+            getImage(pokemon)
           "
         />
-        <h1 class="headline">{{ pokemon?.name }}</h1>
-        <p class="subtitle-1">ID: {{ pokemon?.id }}</p>
+        <h1 class="headline">{{ capitalizeName(pokemon.name) }}</h1>
         <div class="type">
-          <v-chip
-            v-for="type in pokemon?.types"
-            :color="getTypeColor(type)"
-            class="mr-2"
-          >
-            {{ type }}
-          </v-chip>
+          <div class="details-sub">
+            <h2 class="subtitle-1">ID:</h2>
+            <p>{{ pokemon.id }}</p>
+          </div>
+          <v-divider class="my-5" />
+          <div class="details-sub">
+            <h2 class="subtitle-1">Base Experience:</h2>
+            <p>{{ pokemon.base_experience }}</p>
+          </div>
+          <v-divider class="my-5" />
+          <div class="details-sub">
+            <h2 class="subtitle-1">Weight:</h2>
+            <p>{{ pokemon.weight }} hectograms</p>
+          </div>
         </div>
       </v-col>
       <v-col cols="12" md="8">
         <div class="details">
           <div class="details-sub">
-            <h2 class="subtitle-1">Habilidades:</h2>
+            <h2 class="subtitle-1">Abilities:</h2>
             <div class="contenedor">
               <v-chip
                 class="mr-3 mb-3"
                 color="primary"
-                v-for="ability in pokemon?.abilities">
+                v-for="ability in pokemon.abilities"
+                :key="ability.ability.name"
+              >
                 {{ ability.ability.name }}
               </v-chip>
             </div>
           </div>
           <v-divider class="my-5" />
           <div class="details-sub">
-            <h2 class="subtitle-1">Movimientos:</h2>
-            <div class="contenedor">
+            <h2 class="subtitle-1">Moves:</h2>
+            <div class="moves-container">
+              <div class="contenedor">
+                <!-- Show only the first 5 moves initially -->
+                <v-chip
+                  v-for="(move, index) in visibleMoves"
+                  :key="move.move.name"
+                  class="mr-3 mb-3"
+                  color="secondary"
+                >
+                  {{ move.move.name }}
+                </v-chip>
+              </div>
+              <!-- Button to show all moves -->
+              <v-btn
+                v-if="!showAllMoves"
+                @click="showAllMoves = true"
+                class="show-more-button"
+              >
+                Show All Moves
+              </v-btn>
+            </div>
+            <!-- Show all moves if 'showAllMoves' is true -->
+            <div v-if="showAllMoves" class="contenedor">
               <v-chip
+                v-for="move in pokemon.moves"
+                :key="move.move.name"
                 class="mr-3 mb-3"
-                color="primary"
-                v-for="move in pokemon?.moves">
+                color="secondary"
+              >
                 {{ move.move.name }}
               </v-chip>
             </div>
@@ -56,57 +96,35 @@
 <script setup lang="ts">
 import getData from "~/composables/getData";
 import type { IPokemon } from "~/types/pokemon";
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 const pokemon = ref<IPokemon | null>(null);
+const showAllMoves = ref(false);
 
 async function handleClick() {
   const value = (await getData(`pokemon/${route.params.id}`)) as IPokemon;
   pokemon.value = value;
 }
 
-function getTypeColor(type: string): string {
-  switch (type) {
-    case 'grass':
-      return 'success';
-    case 'fire':
-      return 'error';
-    case 'water':
-      return 'primary';
-    case 'electric':
-      return 'yellow darken-2';
-    case 'ice':
-      return 'light-blue';
-    case 'fighting':
-      return 'deep-orange darken-2';
-    case 'poison':
-      return 'purple darken-2';
-    case 'ground':
-      return 'brown darken-2';
-    case 'flying':
-      return 'blue-grey darken-1';
-    case 'psychic':
-      return 'pink darken-2';
-    case 'bug':
-      return 'lime darken-3';
-    case 'rock':
-      return 'orange darken-3';
-    case 'ghost':
-      return 'indigo darken-4';
-    case 'dragon':
-      return 'deep-purple darken-4';
-    case 'dark':
-      return 'grey darken-3';
-    case 'steel':
-      return 'blue-grey darken-2';
-    case 'fairy':
-      return 'pink lighten-2';
-    default:
-      return 'grey';
-  }
+function capitalizeName(name: string) {
+  return name.charAt(0).toUpperCase() + name.slice(1);
 }
+
+function getImage(pokemon: IPokemon) {
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+}
+
+function goBack() {
+  router.push("/");
+}
+
+const visibleMoves = computed(() => {
+  if (!pokemon.value) return [];
+  return pokemon.value.moves.slice(0, 5);
+});
 
 onMounted(() => {
   handleClick();
@@ -116,19 +134,31 @@ onMounted(() => {
 <style scoped>
 .pokemon-image {
   border: 2px solid #ccc;
-  border-radius: 50%;
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   animation: scaleIn 0.5s ease-out;
 }
 
-.type {
+.headline {
+  font-size: 2.5em;
   margin-top: 10px;
+}
+
+.subtitle-1 {
+  font-size: 1.2em;
+  color: #555;
+}
+
+.type {
+  margin-top: 10px 0;
 }
 
 .details {
   padding: 20px;
-  background-color: #f0f0f0;
+  background: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.5s ease;
 }
 
@@ -141,6 +171,33 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
+.moves-container {
+  margin-top: 10px;
+}
+
+.back-button {
+  background-color: #20252b;
+  color: white;
+  border-radius: 8px;
+  text-transform: uppercase;
+}
+
+.back-button:hover {
+  background-color: #1565c0;
+}
+
+.show-more-button {
+  background-color: #20252b;
+  color: white;
+  border-radius: 8px;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.show-more-button:hover {
+  background-color: #1565c0;
+}
+
 @media (max-width: 600px) {
   .details {
     padding: 10px;
@@ -148,12 +205,22 @@ onMounted(() => {
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(-20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
-  0% { transform: scale(0.8); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>

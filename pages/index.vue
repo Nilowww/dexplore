@@ -10,15 +10,17 @@
               label="Search Pokemon"
               variant="underlined"
               v-model="pokemonName"
+              class="search-field"
             ></v-text-field>
             <v-pagination
               v-else
               v-model="page"
               :length="totalPage"
-              :total-visible="11"
+              :total-visible="7"
               next-icon="mdi-menu-right"
               prev-icon="mdi-menu-left"
               :disabled="!loaded"
+              class="pagination"
             ></v-pagination>
           </div>
         </v-col>
@@ -27,16 +29,19 @@
             variant="flat"
             @click="toggleSearch"
             :icon="showSearch ? 'mdi-close' : 'mdi-magnify'"
+            class="search-toggle-btn"
           ></v-btn>
         </v-col>
       </v-row>
+
+      <!-- Search Chips Section -->
       <v-row v-if="showSearch">
         <v-col cols="12">
-          <div class="d-flex flex-wrap justify-center ga-2">
+          <div class="d-flex flex-wrap justify-center">
             <v-chip
               @click="clearFilter"
-              :class="{ 'chip-selected': isEmpty(selectedType) }"
-              color="grey lighten-2"
+              :class="{ 'type-chip': isEmpty(selectedType), 'chip-all': true }"
+              color="black"
             >
               All
             </v-chip>
@@ -50,12 +55,15 @@
                   ? 'mdi-checkbox-marked'
                   : 'mdi-checkbox-blank-outline'
               "
+              class="type-chip"
             >
               {{ type }}
             </v-chip>
           </div>
         </v-col>
       </v-row>
+
+      <!-- Pokemon Cards Section -->
       <v-row>
         <v-col
           v-if="showSearch && loaded && !pokemons.length"
@@ -67,30 +75,37 @@
         <v-col cols="3" v-for="index in 12" :key="index" v-if="!loaded">
           <v-skeleton-loader type="card"></v-skeleton-loader>
         </v-col>
-        <v-col cols="3" v-else v-for="pokemon in pokemons" :key="pokemon.name">
-          <NuxtLink :to="String(pokemon.id)">
-            <v-card class="pa-2" outlined>
+        <v-col
+          cols="12"
+          sm="6"
+          md="4"
+          lg="3"
+          v-for="pokemon in pokemons"
+          :key="pokemon.name"
+        >
+          <NuxtLink :to="String(pokemon.id)" class="text-decoration-none">
+            <v-card class="pokemon-card" outlined>
               <v-img
                 :src="
                   pokemon.sprites.other['official-artwork']?.front_default ||
                   getImage(pokemon)
                 "
                 width="100%"
+                class="pokemon-img"
               />
               <v-divider></v-divider>
-              <div class="d-flex justify-center ga-2 mt-2">
+              <div class="text-center pokemon-name">
+                {{ capitalizeName(pokemon.name) }}
+              </div>
+              <div class="d-flex flex-wrap justify-center mt-2">
                 <v-chip
-                  class="text-decoration-none"
                   v-for="type in pokemon.types"
+                  :key="type"
                   :color="getTypeColor(type)"
+                  class="type-chip"
                 >
                   {{ type }}
                 </v-chip>
-              </div>
-              <div class="text-center">
-                <div class="pokemon-name">
-                  {{ pokemon.name }}
-                </div>
               </div>
             </v-card>
           </NuxtLink>
@@ -102,7 +117,7 @@
 
 <script setup lang="ts">
 import { debounce, isEmpty } from "lodash";
-import { ref, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
 
@@ -134,6 +149,9 @@ const types = [
   "dark",
 ];
 
+const offset = computed(() => (page.value - 1) * 20);
+const totalPage = computed(() => Math.ceil(totalPokemon.value / 20));
+
 const searchDebounced = debounce(() => {
   if (page.value > 1) {
     page.value = 1;
@@ -146,28 +164,19 @@ function toggleSearch() {
   showSearch.value = !showSearch.value;
 }
 
-const offset = computed(() => {
-  return (page.value - 1) * 20;
-});
+function getImage(pokemon: IPokemonShort) {
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+}
 
-const totalPage = computed(() => {
-  return Math.ceil(totalPokemon.value / 20);
-});
+function capitalizeName(name: string) {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
 
 async function handleClick() {
   loaded.value = false;
-
-  const params: Record<string, any> = {
-    offset: String(offset.value),
-  };
-
-  if (pokemonName.value.length > 0) {
-    params.name = pokemonName.value;
-  }
-
-  if (!isEmpty(selectedType.value)) {
-    params.type = selectedType.value.join();
-  }
+  const params: Record<string, any> = { offset: String(offset.value) };
+  if (pokemonName.value.length > 0) params.name = pokemonName.value;
+  if (!isEmpty(selectedType.value)) params.type = selectedType.value.join();
 
   const value = (await getData(
     `/pokemon?` + new URLSearchParams(params)
@@ -178,15 +187,9 @@ async function handleClick() {
 }
 
 function selectType(type: string) {
-  const hasType = selectedType.value.includes(type);
-
-  if (hasType) {
-    selectedType.value = selectedType.value.filter(
-      (currentType) => currentType !== type
-    );
-  } else {
-    selectedType.value = [...selectedType.value, type];
-  }
+  selectedType.value = selectedType.value.includes(type)
+    ? selectedType.value.filter((currentType) => currentType !== type)
+    : [...selectedType.value, type];
   page.value = 1;
   handleClick();
 }
@@ -197,35 +200,111 @@ function clearFilter() {
   handleClick();
 }
 
-watch(page, () => {
-  handleClick();
-});
-
-onMounted(() => {
-  handleClick();
-});
-
-function getImage(pokemon: IPokemonShort) {
-  const imageURL = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
-  return imageURL;
+function getTypeColor(type: string): string {
+  switch (type) {
+    case "grass":
+      return "success";
+    case "fire":
+      return "error";
+    case "water":
+      return "primary";
+    case "electric":
+      return "yellow darken-2";
+    case "ice":
+      return "light-blue";
+    case "fighting":
+      return "deep-orange darken-2";
+    case "poison":
+      return "purple darken-2";
+    case "ground":
+      return "brown darken-2";
+    case "flying":
+      return "blue-grey darken-1";
+    case "psychic":
+      return "pink darken-2";
+    case "bug":
+      return "lime darken-3";
+    case "rock":
+      return "orange darken-3";
+    case "ghost":
+      return "indigo darken-4";
+    case "dragon":
+      return "deep-purple darken-4";
+    case "dark":
+      return "grey darken-3";
+    case "steel":
+      return "blue-grey darken-2";
+    case "fairy":
+      return "pink lighten-2";
+    default:
+      return "grey";
+  }
 }
+
+watch(page, () => handleClick());
+
+onMounted(() => handleClick());
 </script>
 
 <style scoped>
-.chip-selected {
-  border: 2px solid black;
+.search-field {
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.search-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding: 0;
+  margin-top: 23px;
+}
+.pagination {
+  margin-top: 20px;
+}
+
+.type-chip {
+  border-radius: 8px;
+  margin: 4px;
+}
+
+.chip-all {
+  border-radius: 8px;
+  margin: 4px;
   font-weight: bold;
 }
 
-.v-card {
-  text-align: center;
+.pokemon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f5f5f5;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pokemon-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pokemon-img {
+  background-color: #e0e0e0;
+  padding: 16px;
 }
 
 .pokemon-name {
-  background-color: black;
-  color: white;
-  padding: 8px;
-  border-radius: 4px;
-  margin-top: 8px;
+  background-color: transparent;
+  color: #333;
+  font-size: 1.2em;
+  font-family: "Arial", sans-serif;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .pokemon-card {
+    margin-bottom: 20px;
+  }
 }
 </style>
