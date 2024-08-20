@@ -1,5 +1,6 @@
 <template>
   <div>
+    <button @click="logout">Logout</button>
     <v-container>
       <v-row>
         <v-col cols="11">
@@ -104,7 +105,12 @@
                   :color="getTypeColor(type)"
                   class="type-chip"
                 >
-                  {{ type }}
+                  <i
+                    v-if="type !== 'normal'"
+                    :class="getTypeIcon(type)"
+                    class="type-icon"
+                  ></i>
+                  <span class="type-text">{{ type }}</span>
                 </v-chip>
               </div>
             </v-card>
@@ -120,6 +126,7 @@ import { debounce, isEmpty } from "lodash";
 import { ref, computed, onMounted, watch } from "vue";
 import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 const loaded = ref(false);
 const pokemons = ref<IPokemonShort[]>([]);
@@ -128,6 +135,21 @@ const totalPokemon = ref(0);
 const showSearch = ref(false);
 const pokemonName = ref("");
 const selectedType = ref<string[]>([]);
+definePageMeta({
+  middleware: "authenticated",
+});
+
+const supaAuth = useSupabaseClient().auth;
+
+const logout = async () => {
+  const { error } = await supaAuth.signOut();
+  if (error) {
+    alert(error.message);
+  } else {
+    return navigateTo("/login");
+  }
+};
+
 const types = [
   "grass",
   "poison",
@@ -200,6 +222,29 @@ function clearFilter() {
   handleClick();
 }
 
+function getTypeIcon(type: string): string {
+  const typeIcons: Record<string, string> = {
+    grass: "fas fa-leaf",
+    fire: "fas fa-fire",
+    water: "fas fa-tint",
+    electric: "fas fa-bolt",
+    ice: "fas fa-snowflake",
+    fighting: "fas fa-fist-raised",
+    poison: "fas fa-skull-crossbones",
+    ground: "fas fa-earth",
+    flying: "fas fa-paper-plane",
+    psychic: "fas fa-brain",
+    bug: "fas fa-bug",
+    rock: "fas fa-mountain",
+    ghost: "fas fa-ghost",
+    dragon: "fas fa-dragon",
+    dark: "fas fa-moon",
+    steel: "fas fa-shield-alt",
+    fairy: "fas fa-star",
+  };
+  return typeIcons[type] || "fas fa-question-circle";
+}
+
 function getTypeColor(type: string): string {
   switch (type) {
     case "grass":
@@ -260,13 +305,24 @@ onMounted(() => handleClick());
   padding: 0;
   margin-top: 23px;
 }
+
 .pagination {
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .type-chip {
-  border-radius: 8px;
+  border-radius: 12px;
   margin: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.type-icon {
+  margin-right: 5px;
+  font-size: 1.1em;
 }
 
 .chip-all {
@@ -280,17 +336,22 @@ onMounted(() => handleClick());
   flex-direction: column;
   align-items: center;
   background-color: #f5f5f5;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .pokemon-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  background-color: #e0f7fa;
 }
 
 .pokemon-img {
   background-color: #e0e0e0;
   padding: 16px;
+  border-radius: 12px;
 }
 
 .pokemon-name {

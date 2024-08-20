@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
 
-    <!-- Pokemon Details -->
+    <!-- Pokémon Details -->
     <v-row>
       <v-col cols="12" md="4" class="text-center">
         <v-img
@@ -56,7 +56,6 @@
             <h2 class="subtitle-1">Moves:</h2>
             <div class="moves-container">
               <div class="contenedor">
-                <!-- Show only the first 5 moves initially -->
                 <v-chip
                   v-for="(move, index) in visibleMoves"
                   :key="move.move.name"
@@ -66,7 +65,6 @@
                   {{ move.move.name }}
                 </v-chip>
               </div>
-              <!-- Button to show all moves -->
               <v-btn
                 v-if="!showAllMoves"
                 @click="showAllMoves = true"
@@ -75,7 +73,6 @@
                 Show All Moves
               </v-btn>
             </div>
-            <!-- Show all moves if 'showAllMoves' is true -->
             <div v-if="showAllMoves" class="contenedor">
               <v-chip
                 v-for="move in pokemon.moves"
