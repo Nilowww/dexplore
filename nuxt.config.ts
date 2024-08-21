@@ -33,4 +33,11 @@ export default defineNuxtConfig({
       baseURL: process.env.NUXT_PUBLIC_BASE_URL || "https://www.example.com/",
     },
   },
+  supabase : {
+    redirectOptions : {
+      login: "/login",
+      callback: "/",
+      exclude: ["/register"]
+    }
+  }
 });

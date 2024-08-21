@@ -1,7 +1,31 @@
 <template>
   <div>
-    <button @click="logout">Logout</button>
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <v-card>
+        <v-card-title class="headline"> </v-card-title>
+        <v-card-subtitle> Are you sure you want to log out? </v-card-subtitle>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="confirmLogout" color="blue" text>Logout</v-btn>
+          <v-btn @click="dialog = false" color="grey" text>Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-container>
+      <v-row>
+        <v-col cols="12">
+          <v-btn
+            @click="dialog = true"
+            class="logout-btn"
+            elevation="2"
+            color="grey"
+            :loading="loading"
+          >
+            <v-icon>mdi-logout</v-icon>
+            <span class="d-none d-sm-inline">Logout</span>
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-row>
         <v-col cols="11">
           <div class="text-center">
@@ -138,15 +162,19 @@ const selectedType = ref<string[]>([]);
 definePageMeta({
   middleware: "authenticated",
 });
+const dialog = ref(false);
+const loading = ref(false);
 
 const supaAuth = useSupabaseClient().auth;
 
-const logout = async () => {
+const confirmLogout = async () => {
+  loading.value = true;
   const { error } = await supaAuth.signOut();
+  loading.value = false;
   if (error) {
     alert(error.message);
   } else {
-    return navigateTo("/login");
+    navigateTo("/login");
   }
 };
 
@@ -292,6 +320,30 @@ onMounted(() => handleClick());
 </script>
 
 <style scoped>
+.logout-btn {
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 8px;
+  padding: 10px 20px;
+  transition: background-color 0.3s, transform 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+}
+
+.logout-btn:hover {
+  background-color: #1976d2;
+  transform: scale(1.05);
+}
+
+.logout-btn v-icon {
+  margin-right: 8px;
+}
+
 .search-field {
   max-width: 400px;
   margin: 20px auto;

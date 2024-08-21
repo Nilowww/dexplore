@@ -1,8 +1,8 @@
 <template>
-  <v-container fluid class="login-container">
+  <v-container fluid class="signup-container">
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="6" lg="4">
-        <v-card class="login-card" elevation="16">
+        <v-card class="signup-card" elevation="16">
           <v-card-title class="text-center">
             <v-img
               src="/assets/pokemon-icon.png"
@@ -12,10 +12,10 @@
             />
           </v-card-title>
           <v-card-subtitle class="text-center mb-4">
-            <h1 class="headline mb-2">Sign In</h1>
-            <p class="subheading">Enter your details to get started</p>
+            <h1 class="headline mb-2">Sign Up</h1>
+            <p class="subheading">Create your account to get started</p>
           </v-card-subtitle>
-          <v-form @submit.prevent="login">
+          <v-form @submit.prevent="signUp">
             <div class="text-field-wrapper">
               <v-text-field
                 v-model="credentials.email"
@@ -23,7 +23,7 @@
                 type="email"
                 required
                 :rules="[(v: any) => !!v || 'Email is required']"
-                class="login-text-field"
+                class="signup-text-field"
                 prepend-icon="mdi-email"
               />
               <v-text-field
@@ -32,7 +32,18 @@
                 label="Password"
                 required
                 :rules="[(v: any) => !!v || 'Password is required']"
-                class="login-text-field"
+                class="signup-text-field"
+                prepend-icon="mdi-lock"
+                :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append="togglePasswordVisibility"
+              />
+              <v-text-field
+                v-model="credentials.passwordConfirm"
+                :type="passwordType"
+                label="Confirm Password"
+                required
+                :rules="[(v: any) => !!v || 'Please confirm your password']"
+                class="signup-text-field"
                 prepend-icon="mdi-lock"
                 :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 @click:append="togglePasswordVisibility"
@@ -54,18 +65,15 @@
               block
               class="submit-btn"
             >
-              Sign In
+              Sign Up
             </v-btn>
             <v-divider class="my-4" />
             <v-row>
               <v-col class="text-center">
                 <p class="text-body-2">
-                  Don't have an account?
-                  <nuxt-link
-                    to="/register"
-                    class="font-weight-bold text-primary"
-                  >
-                    Sign Up
+                  Already have an account?
+                  <nuxt-link to="/login" class="font-weight-bold text-primary">
+                    Sign In
                   </nuxt-link>
                 </p>
               </v-col>
@@ -86,6 +94,7 @@ const supaAuth = useSupabaseClient().auth;
 const credentials = reactive({
   email: "",
   password: "",
+  passwordConfirm: "",
 });
 
 const loading = ref(false);
@@ -98,30 +107,39 @@ function togglePasswordVisibility() {
   showPassword.value = !showPassword.value;
 }
 
-const login = async () => {
+const signUp = async () => {
+  if (credentials.password !== credentials.passwordConfirm) {
+    errorMessage.value = "Passwords do not match";
+    return;
+  }
+
   loading.value = true;
-  const { error } = await supaAuth.signInWithPassword(credentials);
+  const { error } = await supaAuth.signUp({
+    email: credentials.email,
+    password: credentials.password,
+  });
   loading.value = false;
 
   if (error) {
     errorMessage.value = error.message;
   } else {
-    navigateTo("/");
+    navigateTo("/login");
   }
 };
 </script>
 
 <style scoped>
-.login-container {
+.signup-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/assets/pokemon-background.jpg") no-repeat center center;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("/assets/pokemon-background.jpg") no-repeat center center;
   background-size: cover;
 }
 
-.login-card {
+.signup-card {
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.95);
   padding: 24px;
@@ -143,23 +161,23 @@ const login = async () => {
   flex-direction: column;
 }
 
-.login-text-field {
+.signup-text-field {
   border-radius: 8px;
   margin-bottom: 16px;
   width: 100%;
   transition: box-shadow 0.3s ease;
 }
 
-.login-text-field .v-input__control {
+.signup-text-field .v-input__control {
   border-radius: 8px;
 }
 
-.login-text-field .v-input__control,
-.login-text-field input {
+.signup-text-field .v-input__control,
+.signup-text-field input {
   height: 56px;
 }
 
-.login-text-field:hover .v-input__control {
+.signup-text-field:hover .v-input__control {
   box-shadow: 0 0 0 2px #0072ff;
 }
 
