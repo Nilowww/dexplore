@@ -137,6 +137,17 @@ const signUp = async () => {
   background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url("/assets/pokemon-background.jpg") no-repeat center center;
   background-size: cover;
+  background-attachment: fixed;
+  animation: backgroundAnimation 30s infinite alternate;
+}
+
+@keyframes backgroundAnimation {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
 }
 
 .signup-card {
@@ -144,7 +155,7 @@ const signUp = async () => {
   background: rgba(255, 255, 255, 0.95);
   padding: 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 1s ease-out;
+  animation: fadeIn 0.1s ease-out;
 }
 
 .v-card-title .headline {
@@ -165,7 +176,7 @@ const signUp = async () => {
   border-radius: 8px;
   margin-bottom: 16px;
   width: 100%;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.1s ease;
 }
 
 .signup-text-field .v-input__control {
@@ -187,7 +198,7 @@ const signUp = async () => {
   text-transform: uppercase;
   max-width: 200px;
   margin: 0 auto;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.1s ease, transform 0.1s ease;
 }
 
 .submit-btn:hover {

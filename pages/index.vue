@@ -1,44 +1,43 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" persistent max-width="290">
-      <v-card>
-        <v-card-title class="headline"> </v-card-title>
-        <v-card-subtitle> Are you sure you want to log out? </v-card-subtitle>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="confirmLogout" color="blue" text>Logout</v-btn>
-          <v-btn @click="dialog = false" color="grey" text>Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-container>
-      <v-row>
-        <v-col cols="12">
-          <v-btn
-            @click="dialog = true"
-            class="logout-btn"
-            elevation="2"
-            color="grey"
-            :loading="loading"
-          >
-            <v-icon>mdi-logout</v-icon>
-            <span class="d-none d-sm-inline">Logout</span>
-          </v-btn>
-        </v-col>
-      </v-row>
+      <v-row> </v-row>
       <v-row>
         <v-col cols="11">
           <div class="text-center">
-            <v-text-field
-              v-if="showSearch"
-              @input="searchDebounced"
-              label="Search Pokemon"
-              variant="underlined"
-              v-model="pokemonName"
-              class="search-field"
-            ></v-text-field>
+            <!-- Search Chips Section -->
+            <v-row v-if="showSearch">
+              <v-col cols="12">
+                <div class="d-flex flex-wrap justify-center">
+                  <v-chip
+                    @click="clearFilter"
+                    :class="{
+                      'type-chip': isEmpty(selectedType),
+                      'chip-all': true,
+                    }"
+                    color="black"
+                  >
+                    All
+                  </v-chip>
+                  <v-chip
+                    v-for="type in types"
+                    :key="type"
+                    :color="getTypeColor(type)"
+                    @click="selectType(type)"
+                    :prepend-icon="
+                      selectedType.includes(type)
+                        ? 'mdi-checkbox-marked'
+                        : 'mdi-checkbox-blank-outline'
+                    "
+                    class="type-chip"
+                  >
+                    {{ type }}
+                  </v-chip>
+                </div>
+              </v-col>
+            </v-row>
             <v-pagination
-              v-else
+              v-else-if="loaded && pokemons.length"
               v-model="page"
               :length="totalPage"
               :total-visible="7"
@@ -53,48 +52,15 @@
           <v-btn
             variant="flat"
             @click="toggleSearch"
-            :icon="showSearch ? 'mdi-close' : 'mdi-magnify'"
+            :icon="showSearch ? 'mdi-close' : 'mdi-filter'"
             class="search-toggle-btn"
           ></v-btn>
         </v-col>
       </v-row>
 
-      <!-- Search Chips Section -->
-      <v-row v-if="showSearch">
-        <v-col cols="12">
-          <div class="d-flex flex-wrap justify-center">
-            <v-chip
-              @click="clearFilter"
-              :class="{ 'type-chip': isEmpty(selectedType), 'chip-all': true }"
-              color="black"
-            >
-              All
-            </v-chip>
-            <v-chip
-              v-for="type in types"
-              :key="type"
-              :color="getTypeColor(type)"
-              @click="selectType(type)"
-              :prepend-icon="
-                selectedType.includes(type)
-                  ? 'mdi-checkbox-marked'
-                  : 'mdi-checkbox-blank-outline'
-              "
-              class="type-chip"
-            >
-              {{ type }}
-            </v-chip>
-          </div>
-        </v-col>
-      </v-row>
-
       <!-- Pokemon Cards Section -->
       <v-row>
-        <v-col
-          v-if="showSearch && loaded && !pokemons.length"
-          cols="12"
-          class="text-center"
-        >
+        <v-col v-if="loaded && !pokemons.length" cols="12" class="text-center">
           No pokemons found
         </v-col>
         <v-col cols="3" v-for="index in 12" :key="index" v-if="!loaded">
@@ -152,31 +118,17 @@ import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
 import "@fortawesome/fontawesome-free/css/all.css";
 
+const route = useRoute();
+
 const loaded = ref(false);
 const pokemons = ref<IPokemonShort[]>([]);
 const page = ref(1);
 const totalPokemon = ref(0);
 const showSearch = ref(false);
-const pokemonName = ref("");
 const selectedType = ref<string[]>([]);
 definePageMeta({
   middleware: "authenticated",
 });
-const dialog = ref(false);
-const loading = ref(false);
-
-const supaAuth = useSupabaseClient().auth;
-
-const confirmLogout = async () => {
-  loading.value = true;
-  const { error } = await supaAuth.signOut();
-  loading.value = false;
-  if (error) {
-    alert(error.message);
-  } else {
-    navigateTo("/login");
-  }
-};
 
 const types = [
   "grass",
@@ -225,7 +177,8 @@ function capitalizeName(name: string) {
 async function handleClick() {
   loaded.value = false;
   const params: Record<string, any> = { offset: String(offset.value) };
-  if (pokemonName.value.length > 0) params.name = pokemonName.value;
+  if (route.query.pokemon && route.query.pokemon?.length > 0)
+    params.name = route.query.pokemon;
   if (!isEmpty(selectedType.value)) params.type = selectedType.value.join();
 
   const value = (await getData(
@@ -315,6 +268,10 @@ function getTypeColor(type: string): string {
 }
 
 watch(page, () => handleClick());
+watch(
+  () => route.query.pokemon,
+  () => searchDebounced()
+);
 
 onMounted(() => handleClick());
 </script>

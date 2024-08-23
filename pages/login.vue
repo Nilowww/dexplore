@@ -47,6 +47,7 @@
             >
               {{ errorMessage }}
             </v-alert>
+            <v-checkbox v-model="rememberMe" label="Remember Me" class="mb-4" />
             <v-btn
               type="submit"
               :loading="loading"
@@ -88,6 +89,7 @@ const credentials = reactive({
   password: "",
 });
 
+const rememberMe = ref(false);
 const loading = ref(false);
 const errorMessage = ref("");
 const showPassword = ref(false);
@@ -117,8 +119,20 @@ const login = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/assets/pokemon-background.jpg") no-repeat center center;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("/assets/pokemon-background.jpg") no-repeat center center;
   background-size: cover;
+  background-attachment: fixed;
+  animation: backgroundAnimation 30s infinite alternate;
+}
+
+@keyframes backgroundAnimation {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
 }
 
 .login-card {
@@ -126,7 +140,7 @@ const login = async () => {
   background: rgba(255, 255, 255, 0.95);
   padding: 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 1s ease-out;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .v-card-title .headline {
@@ -147,7 +161,7 @@ const login = async () => {
   border-radius: 8px;
   margin-bottom: 16px;
   width: 100%;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.1s ease;
 }
 
 .login-text-field .v-input__control {
@@ -169,7 +183,7 @@ const login = async () => {
   text-transform: uppercase;
   max-width: 200px;
   margin: 0 auto;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.1s ease, transform 0.1s ease;
 }
 
 .submit-btn:hover {
