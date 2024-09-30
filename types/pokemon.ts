@@ -10,6 +10,12 @@ export interface IPokemonShort {
   types: string[]
 }
 
+export interface IPokemonSaved {
+  id: number;
+  user_id: string;
+  pokemon_id: number;
+}
+
 export interface IPokemon extends IPokemonShort {
   base_experience: number;
   weight: number;

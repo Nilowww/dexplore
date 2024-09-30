@@ -76,6 +76,9 @@
         >
           <NuxtLink :to="String(pokemon.id)" class="text-decoration-none">
             <v-card class="pokemon-card" outlined>
+              <div class="position-absolute top-0 left-0" style="z-index:2">
+                <FavoriteStar :pokemon="pokemon" />
+              </div>
               <v-img
                 :src="
                   pokemon.sprites.other['official-artwork']?.front_default ||
@@ -117,6 +120,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
 import "@fortawesome/fontawesome-free/css/all.css";
+import FavoriteStar from "~/components/buttons/FavoriteStar.vue";
 
 const route = useRoute();
 

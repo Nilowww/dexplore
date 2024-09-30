@@ -3,11 +3,11 @@ import Logout from "./buttons/Logout.vue";
 import SearchPokemon from "./SearchPokemon.vue";
 const user = useSupabaseUser();
 const drawerOpen = ref(false);
+const router = useRouter();
 
 function toggleDrawer() {
   drawerOpen.value = !drawerOpen.value;
 }
-
 </script>
 
 <template>
@@ -16,7 +16,7 @@ function toggleDrawer() {
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
     </template>
     <template v-slot:append>
-    <SearchPokemon></SearchPokemon>
+      <SearchPokemon></SearchPokemon>
     </template>
   </v-app-bar>
   <v-navigation-drawer v-model="drawerOpen" class="navbar">
@@ -31,19 +31,26 @@ function toggleDrawer() {
 
     <v-list density="compact" nav>
       <v-list-item
-        prepend-icon="mdi-folder"
-        title="My Files"
+        prepend-icon="mdi-home"
+        title="Home"
         value="myfiles"
-      ></v-list-item>
-      <v-list-item
-        prepend-icon="mdi-account-multiple"
-        title="Shared with me"
-        value="shared"
+        @click="
+          () => {
+            toggleDrawer();
+            router.push('/');
+          }
+        "
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-star"
         title="Starred"
         value="starred"
+        @click="
+          () => {
+            toggleDrawer();
+            router.push('/favorites');
+          }
+        "
       ></v-list-item>
     </v-list>
 

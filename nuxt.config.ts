@@ -13,6 +13,7 @@ export default defineNuxtConfig({
         vueI18n: "./i18n.config.ts", // if you are using custom path, default
       },
     ],
+    "@pinia/nuxt",
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
         // @ts-expect-error
@@ -33,11 +34,11 @@ export default defineNuxtConfig({
       baseURL: process.env.NUXT_PUBLIC_BASE_URL || "https://www.example.com/",
     },
   },
-  supabase : {
-    redirectOptions : {
+  supabase: {
+    redirectOptions: {
       login: "/login",
       callback: "/",
-      exclude: ["/register"]
-    }
-  }
+      exclude: ["/register"],
+    },
+  },
 });

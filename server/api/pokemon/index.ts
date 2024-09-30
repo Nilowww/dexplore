@@ -44,10 +44,11 @@ const types = [
 
 export default defineEventHandler(async (event) => {
   const params = getQuery(event);
-  const query = `query getPokemons($offset: Int, $name: String = "%%", $type: [String!]) {
+  const query = `query getPokemons($offset: Int, $name: String = "%%", $type: [String!]${params.pokemon_ids ? ', $pokemon_id: [Int!]' : ''}) {
     count: pokemon_v2_pokemon_aggregate(
       where: {
         name: {_like: $name},
+        ${params.pokemon_ids ? 'id: { _in: $pokemon_id },' : ''}
         pokemon_v2_pokemontypes: {
           pokemon_v2_type: {
             name: {_in: $type}
@@ -60,9 +61,10 @@ export default defineEventHandler(async (event) => {
       }
     }
     results: pokemon_v2_pokemon(
-      limit: 20,
+      ${params.pokemon_ids ? '' : 'limit: 20'}
       offset: $offset,
       where: {
+        ${params.pokemon_ids ? 'id: { _in: $pokemon_id },' : ''}
         name: {_like: $name},
         pokemon_v2_pokemontypes: {
           pokemon_v2_type: {
@@ -85,14 +87,19 @@ export default defineEventHandler(async (event) => {
     }
   }
   `
+  const queryParams: Record<string, any> = {
+    offset: params.offset,
+    name: `%${params.name || ""}%`,
+    type: params.type ? (params.type as string).split(',') : types
+  }
+
+  if(params.pokemon_ids) {
+    queryParams.pokemon_id = JSON.parse(params.pokemon_ids as string);
+  }
 
   const response = (await fetchGraphQL(
     query,
-    {
-      offset: params.offset,
-      name: `%${params.name || ""}%`,
-      type: params.type ? (params.type as string).split(',') : types,
-    },
+    queryParams,
     "getPokemons"
   )) as IPokemonShortGQLResponse;
   return processResponse(response);
