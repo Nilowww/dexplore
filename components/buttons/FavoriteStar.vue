@@ -2,8 +2,10 @@
   <v-btn
     variant="flat"
     :icon="true"
-    @click.prevent="favoriteStore.addPokemons(pokemon)"
+    @click.prevent="handleClick()"
     color="transparent"
+    :loading="loading"
+  
   >
     <v-icon
       class="shadow-icon"
@@ -18,9 +20,12 @@
 import { useFavoritesStore } from "~/store/favorites";
 import type { IPokemonShort } from "~/types/pokemon";
 
+
 const props = defineProps<{
   pokemon: IPokemonShort;
 }>();
+
+const loading = ref(false);
 
 const favoriteStore = useFavoritesStore();
 
@@ -29,6 +34,12 @@ const isChecked = computed(() => {
     return currentPokemon.id == props.pokemon.id;
   });
 });
+
+const handleClick = async () => {
+  loading.value = true;
+  await favoriteStore.addPokemons(props.pokemon)
+  loading.value = false;
+}
 
 </script>
 

@@ -12,29 +12,7 @@
           v-for="pokemon in favoritePokemons"
           :key="pokemon.id"
         >
-          <v-card class="pokemon-card" outlined>
-            <v-img
-              :src="getImage(pokemon)"
-              height="200px"
-              class="pokemon-img"
-            />
-            <v-card-title class="text-center">
-              {{ capitalizeName(pokemon.name) }}
-            </v-card-title>
-            <v-card-actions class="justify-center">
-              <v-btn
-                icon
-                @click="removeFavorite(pokemon)"
-                aria-label="Remove from favorites"
-                color="red"
-              >
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-              <NuxtLink :to="String(pokemon.id)" class="text-decoration-none">
-                <v-btn color="primary">View Details</v-btn>
-              </NuxtLink>
-            </v-card-actions>
-          </v-card>
+        <PokemonCard :pokemon="pokemon"</PokemonCard>
         </v-col>
       </v-row>
     </v-container>
