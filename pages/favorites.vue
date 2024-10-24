@@ -12,7 +12,7 @@
           v-for="pokemon in favoritePokemons"
           :key="pokemon.id"
         >
-        <PokemonCard :pokemon="pokemon"</PokemonCard>
+        <PokemonCard :pokemon="pokemon" hide-types show-id title-size></PokemonCard>
         </v-col>
       </v-row>
     </v-container>

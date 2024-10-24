@@ -9,16 +9,8 @@
     <!-- Pokémon Details -->
     <v-row>
       <v-col cols="12" md="4" class="text-center">
-        <v-img
-          width="100%"
-          contain
-          class="pokemon-image"
-          :src="
-            pokemon?.sprites.other['official-artwork']?.front_default ||
-            getImage(pokemon)
-          "
-        />
-        <h1 class="headline">{{ capitalizeName(pokemon.name) }}</h1>
+        <PokemonCard :pokemon="pokemon" plain/>
+        <v-divider class="my-5" />
         <div class="type">
           <div class="details-sub">
             <h2 class="subtitle-1">ID:</h2>
@@ -85,6 +77,19 @@
             </div>
           </div>
         </div>
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-container v-else>
+    <v-row>
+      <v-col cols="4">
+        <v-skeleton-loader
+          type="ossein, chip, chip, divider, text, text, text"
+          height="500"
+        ></v-skeleton-loader>
+      </v-col>
+      <v-col cols="8">
+        <v-skeleton-loader type="card, card"></v-skeleton-loader>
       </v-col>
     </v-row>
   </v-container>

@@ -13,7 +13,6 @@
                     @click="clearFilter"
                     :class="{
                       'type-chip': isEmpty(selectedType),
-                      'chip-all': true,
                     }"
                     color="black"
                   >
@@ -74,7 +73,7 @@
           v-for="pokemon in pokemons"
           :key="pokemon.name"
         >
-        <PokemonCard :pokemon="pokemon"></PokemonCard>
+        <PokemonCard :pokemon="pokemon" hide-favorites></PokemonCard>
         </v-col>
       </v-row>
     </v-container>
@@ -215,3 +214,44 @@ watch(
 
 onMounted(() => handleClick());
 </script>
+
+<style scoped>
+.type-chip {
+  border-radius: 12px;
+  margin: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.type-icon {
+  margin-right: 5px;
+  font-size: 1.1em;
+}
+
+.chip-all {
+  border-radius: 8px;
+  margin: 4px;
+  font-weight: bold;
+}
+
+.search-field {
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.search-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding: 0;
+  margin-top: 23px;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+</style>

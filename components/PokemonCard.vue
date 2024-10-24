@@ -1,7 +1,16 @@
 <template>
   <NuxtLink :to="String(pokemon.id)" class="text-decoration-none">
-    <v-card class="pokemon-card" outlined>
-      <div class="position-absolute top-0 left-0" style="z-index: 2">
+    <v-card
+      class="pokemon-card pb-3"
+      :class="{ plain: plain }"
+      elevation="0"
+      outlined
+    >
+      <div
+        v-if="!hideFavorites"
+        class="position-absolute top-0 left-0"
+        style="z-index: 2"
+      >
         <FavoriteStar :pokemon="pokemon" />
       </div>
       <v-img
@@ -13,10 +22,14 @@
         class="pokemon-img"
       />
       <v-divider></v-divider>
-      <div class="text-center pokemon-name">
+      <div class="text-center pokemon-name" :class="{ titleSize: titleSize }"
+      >
         {{ capitalizeName(pokemon.name) }}
       </div>
-      <div class="d-flex flex-wrap justify-center mt-2">
+      <div v-if="showId">
+        <h2 class="subtitle-1">ID: {{ pokemon.id }}</h2>
+      </div>
+      <div v-if="!hideTypes" class="d-flex flex-wrap justify-center mt-2">
         <v-chip
           v-for="type in pokemon.types"
           :key="type"
@@ -41,6 +54,11 @@ import FavoriteStar from "./buttons/FavoriteStar.vue";
 
 const props = defineProps<{
   pokemon: IPokemonShort;
+  hideFavorites?: boolean;
+  plain?: boolean;
+  hideTypes?: boolean;
+  showId?: boolean;
+  titleSize?: boolean;
 }>();
 
 function getTypeIcon(type: string): string {
@@ -75,49 +93,10 @@ function capitalizeName(name: string) {
 }
 </script>
 
-<style scoped>
-.logout-btn {
-  font-weight: bold;
-  text-transform: uppercase;
-  border-radius: 8px;
-  padding: 10px 20px;
-  transition: background-color 0.3s, transform 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 1000;
-}
-
-.logout-btn:hover {
-  background-color: #1976d2;
-  transform: scale(1.05);
-}
-
-.logout-btn v-icon {
-  margin-right: 8px;
-}
-
-.search-field {
-  max-width: 400px;
-  margin: 20px auto;
-}
-
-.search-toggle-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 56px;
-  padding: 0;
-  margin-top: 23px;
-}
-
-.pagination {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
+<style scoped lang="scss">
+.subtitle-1 {
+  font-size: 0.8em;
+  color: #555;
 }
 
 .type-chip {
@@ -125,7 +104,6 @@ function capitalizeName(name: string) {
   margin: 4px;
   display: flex;
   align-items: center;
-  padding: 0 12px;
 }
 
 .type-icon {
@@ -143,32 +121,42 @@ function capitalizeName(name: string) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f5f5f5;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease,
-    background-color 0.2s ease;
-}
+  box-shadow: 0 !important;
 
-.pokemon-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  background-color: #e0f7fa;
-}
+  &:not(.plain) {
+    .pokemon-img {
+      background-color: #e0e0e0;
+    }
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #f5f5f5;
+    transition: transform 0.2s ease, box-shadow 0.2s ease,
+      background-color 0.2s ease;
 
-.pokemon-img {
-  background-color: #e0e0e0;
-  padding: 16px;
-  border-radius: 12px;
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      background-color: #e0f7fa;
+    }
+  }
+
+  .pokemon-img {
+    padding: 16px;
+    border-radius: 12px;
+  }
 }
 
 .pokemon-name {
   background-color: transparent;
   color: #333;
-  font-size: 1.2em;
+  font-size: small;
   font-family: "Arial", sans-serif;
   font-weight: bold;
   margin-top: 12px;
+
+  &:not(.titleSize) {
+    font-size: 1.2em;
+  }
 }
 
 @media (max-width: 600px) {
