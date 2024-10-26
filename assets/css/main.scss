@@ -1,0 +1,8 @@
+@font-face {
+    font-family: pokeFont;
+    src: url(../fonts/pixelmix.ttf);
+  }
+
+  *:not(.fas) {
+    font-family: pokeFont !important;
+  }

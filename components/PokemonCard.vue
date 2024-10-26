@@ -13,17 +13,18 @@
       >
         <FavoriteStar :pokemon="pokemon" />
       </div>
-      <v-img
-        :src="
-          pokemon.sprites.other['official-artwork']?.front_default ||
-          getImage(pokemon)
-        "
-        width="100%"
-        class="pokemon-img"
-      />
+      <v-hover>
+        <template v-slot:default="{ isHovering, props }">
+          <v-img
+            v-bind="props"
+            :src="getImage(isHovering)"
+            :width="animated ? '50%' : '100%'"
+            class="pokemon-img"
+          />
+        </template>
+      </v-hover>
       <v-divider></v-divider>
-      <div class="text-center pokemon-name" :class="{ titleSize: titleSize }"
-      >
+      <div class="text-center pokemon-name" :class="{ titleSize: titleSize }">
         {{ capitalizeName(pokemon.name) }}
       </div>
       <div v-if="showId">
@@ -59,6 +60,7 @@ const props = defineProps<{
   hideTypes?: boolean;
   showId?: boolean;
   titleSize?: boolean;
+  animated?: boolean;
 }>();
 
 function getTypeIcon(type: string): string {
@@ -84,8 +86,16 @@ function getTypeIcon(type: string): string {
   return typeIcons[type] || "fas fa-question-circle";
 }
 
-function getImage(pokemon: IPokemonShort) {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+function getImage(hovering?: boolean) {
+  let sprite: Record<"front_default" | "back_default", string | null> =
+    props.pokemon.sprites;
+
+  if (props.animated) {
+    sprite =
+      props.pokemon.sprites.versions["generation-v"]["black-white"].animated;
+  }
+
+  return (hovering ? sprite.back_default : sprite.front_default) || props.pokemon.sprites.front_default;
 }
 
 function capitalizeName(name: string) {

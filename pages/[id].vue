@@ -9,7 +9,7 @@
     <!-- Pokémon Details -->
     <v-row>
       <v-col cols="12" md="4" class="text-center">
-        <PokemonCard :pokemon="pokemon" plain/>
+        <PokemonCard :pokemon="pokemon" plain animated />
         <v-divider class="my-5" />
         <div class="type">
           <div class="details-sub">
@@ -24,7 +24,7 @@
           <v-divider class="my-5" />
           <div class="details-sub">
             <h2 class="subtitle-1">Weight:</h2>
-            <p>{{ pokemon.weight }} hectograms</p>
+            <p>{{ pokemon.weight / 10 }} kg</p>
           </div>
         </div>
       </v-col>
@@ -43,6 +43,34 @@
               </v-chip>
             </div>
           </div>
+          <v-divider class="my-5" />
+          <h2 class="subtitle-1">Stats:</h2>
+          <v-card class="pa-5 elevation-5" color="grey-lighten-4">
+            <v-card-body>
+              <v-row>
+                <v-col class="pa-0" v-for="stat in pokemon.stats" cols="2">
+                  <v-tooltip :text= "stat.base_stat" location="top center" origin="overlap">
+                    <template v-slot:activator="{ props }">
+                      <div class="stat-container" v-bind="props">
+                        <li
+                          v-for="index in 15"
+                          :class="{
+                            painted: index >= 16 - getLimit(stat.base_stat),
+                          }"
+                          :style="{
+                            backgroundColor: getStatsColor(stat.stat.name),
+                          }"
+                        ></li>
+                      </div>
+                      <p class="text-center text-caption" style="text-transform: capitalize !important">
+                        {{ stat.stat.name.replace("-", " ") }}
+                      </p>
+                    </template>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+            </v-card-body>
+          </v-card>
           <v-divider class="my-5" />
           <div class="details-sub">
             <h2 class="subtitle-1">Moves:</h2>
@@ -111,16 +139,32 @@ async function handleClick() {
   pokemon.value = value;
 }
 
-function capitalizeName(name: string) {
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
-
-function getImage(pokemon: IPokemon) {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
-}
-
 function goBack() {
   router.push("/");
+}
+
+function getStatsColor(stat: string): string {
+  switch (stat) {
+    case "hp":
+      return "green";
+    case "attack":
+      return "red";
+    case "defense":
+      return "blue";
+    case "special-attack":
+      return "#991119";
+    case "special-defense":
+      return "#09057f";
+    case "speed":
+      return "#0be0c0";
+    default:
+      return "grey";
+  }
+}
+
+function getLimit(total: number) {
+  total = (total * 15) / 255;
+  return Math.ceil(total);
 }
 
 const visibleMoves = computed(() => {
@@ -198,6 +242,20 @@ onMounted(() => {
 
 .show-more-button:hover {
   background-color: #1565c0;
+}
+
+.stat-container {
+  list-style: none;
+  padding: 5px;
+
+  li {
+    height: 12px;
+    margin-bottom: 5px;
+    opacity: 1;
+    &:not(.painted) {
+      opacity: 0.1;
+    }
+  }
 }
 
 @media (max-width: 600px) {

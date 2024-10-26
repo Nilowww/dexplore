@@ -43,9 +43,18 @@ export default defineEventHandler(async (event) => {
         name
       }
     }
+    stats: pokemon_v2_pokemonstats {
+      base_stat
+      stat: pokemon_v2_stat {
+        name
+        id
+      }
+    }
   }
 }
 `;
+
+
   const response = (await fetchGraphQL(
     query,
     { id: params.id },

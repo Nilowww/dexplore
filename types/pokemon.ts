@@ -22,6 +22,7 @@ export interface IPokemon extends IPokemonShort {
   abilities: IAbilityShort[];
   species: ISpeciesShort;
   moves: IMovesShort[];
+  stats: IPokemonStat[];
 }
 
 export interface IAbilityShort {
@@ -49,6 +50,16 @@ export interface ISprites {
       front_shiny: string | null;
     };
   };
+  versions: {
+    'generation-v': {
+      'black-white': {
+        animated: {
+          front_default: string | null;
+          back_default: string | null;
+        }
+      }
+    }
+  }
 }
 
 export interface IMovesShort {
@@ -61,5 +72,13 @@ export interface ITypesShort {
   type: {
     name: string;
     url: string;
+  }
+}
+
+export interface IPokemonStat {
+  base_stat: number;
+  stat: {
+    name: string;
+    id: number;
   }
 }

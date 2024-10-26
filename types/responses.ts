@@ -1,4 +1,4 @@
-import type { IAbilityShort, IMovesShort, ISpeciesShort, ISprites } from "./pokemon";
+import type { IAbilityShort, IMovesShort, IPokemonStat, ISpeciesShort, ISprites } from "./pokemon";
 
 export interface IPokemonShortGQLResponse {
   results: IPokemonShortResponse[];
@@ -32,4 +32,5 @@ export interface IPokemonResponse extends IPokemonShortResponse {
   abilities: IAbilityShort[];
   species: ISpeciesShort;
   moves: IMovesShort[];
+  stats: IPokemonStat[];
 }
