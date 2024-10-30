@@ -4,5 +4,23 @@
   }
 
   *:not(.fas) {
+    --v-theme-background: transparent !important;
     font-family: pokeFont !important;
   }
+
+
+ body {
+  &::before {
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    content: "";
+    position: absolute;
+    background-repeat: repeat;
+    background-position: center bottom;
+    opacity: 0.8;
+    
+    background-image: url("https://assets.pokemon.com/static2/_ui/img/chrome/container_bg.png")
+  }
+ }

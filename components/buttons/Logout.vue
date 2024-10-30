@@ -30,7 +30,7 @@ const confirmLogout = async () => {
 }
 
 .logout-btn:hover {
-  background-color: #1976d2;
+  background-color: black;
   transform: scale(1.05);
 }
 

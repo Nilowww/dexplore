@@ -11,7 +11,7 @@ function toggleDrawer() {
 </script>
 
 <template>
-  <v-app-bar :elevation="0" rounded v-if="user">
+  <v-app-bar :elevation="0" v-if="user" color="grey-darken-4">
     <template v-slot:prepend>
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
     </template>
@@ -19,7 +19,7 @@ function toggleDrawer() {
       <SearchPokemon></SearchPokemon>
     </template>
   </v-app-bar>
-  <v-navigation-drawer v-model="drawerOpen" class="navbar">
+  <v-navigation-drawer color="grey-darken-4" v-model="drawerOpen" class="navbar">
     <v-list>
       <v-list-item
         prepend-avatar="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
@@ -49,6 +49,17 @@ function toggleDrawer() {
           () => {
             toggleDrawer();
             router.push('/favorites');
+          }
+        "
+      ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-plus"
+        title="Add Pokemon"
+        value="newPokemon"
+        @click="
+          () => {
+            toggleDrawer();
+            router.push('/newPokemon');
           }
         "
       ></v-list-item>

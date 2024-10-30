@@ -13,19 +13,21 @@
       >
         <FavoriteStar :pokemon="pokemon" />
       </div>
-      <v-hover>
-        <template v-slot:default="{ isHovering, props }">
-          <v-img
-            v-bind="props"
-            :src="getImage(isHovering)"
-            :width="animated ? '50%' : '100%'"
-            class="pokemon-img"
-          />
-        </template>
-      </v-hover>
+      <v-container class="pokemon-img">
+        <v-hover>
+          <template v-slot:default="{ isHovering, props }">
+            <v-img
+              v-bind="props"
+              :src="getImage(isHovering)"
+              :width="animated ? '50%' : '100%'"
+              :height="200"
+            />
+          </template>
+        </v-hover>
+      </v-container>
       <v-divider></v-divider>
-      <div class="text-center pokemon-name" :class="{ titleSize: titleSize }">
-        {{ capitalizeName(pokemon.name) }}
+      <div class="text-center pokemon-name" style="text-transform: capitalize;" :class="{ titleSize: titleSize }">
+        {{ pokemon.name.replace(/\-+/g, ' ') }}
       </div>
       <div v-if="showId">
         <h2 class="subtitle-1">ID: {{ pokemon.id }}</h2>
@@ -95,12 +97,12 @@ function getImage(hovering?: boolean) {
       props.pokemon.sprites.versions["generation-v"]["black-white"].animated;
   }
 
-  return (hovering ? sprite.back_default : sprite.front_default) || props.pokemon.sprites.front_default;
+  return (
+    (hovering ? sprite.back_default : sprite.front_default) ||
+    props.pokemon.sprites.front_default
+  );
 }
 
-function capitalizeName(name: string) {
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
 </script>
 
 <style scoped lang="scss">
@@ -137,6 +139,9 @@ function capitalizeName(name: string) {
   &:not(.plain) {
     .pokemon-img {
       background-color: #e0e0e0;
+      background-image: url('https://static.wikia.nocookie.net/pkmn-rejuvenation/images/2/29/BattleBgForest.png');
+      background-size: cover;
+      background-position: right;
     }
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     background-color: #f5f5f5;
@@ -150,9 +155,10 @@ function capitalizeName(name: string) {
     }
   }
 
-  .pokemon-img {
+  .pokemon-img .v-img {
     padding: 16px;
     border-radius: 12px;
+    margin: auto;
   }
 }
 

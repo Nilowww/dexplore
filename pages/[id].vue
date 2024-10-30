@@ -62,7 +62,7 @@
                           }"
                         ></li>
                       </div>
-                      <p class="text-center text-caption" style="text-transform: capitalize !important">
+                      <p class="text-center text-caption" style="text-transform: capitalize  !important">
                         {{ stat.stat.name.replace("-", " ") }}
                       </p>
                     </template>
@@ -128,6 +128,7 @@ import getData from "~/composables/getData";
 import type { IPokemon } from "~/types/pokemon";
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { getStatsColor } from "~/utils";
 
 const route = useRoute();
 const router = useRouter();
@@ -143,24 +144,6 @@ function goBack() {
   router.push("/");
 }
 
-function getStatsColor(stat: string): string {
-  switch (stat) {
-    case "hp":
-      return "green";
-    case "attack":
-      return "red";
-    case "defense":
-      return "blue";
-    case "special-attack":
-      return "#991119";
-    case "special-defense":
-      return "#09057f";
-    case "speed":
-      return "#0be0c0";
-    default:
-      return "grey";
-  }
-}
 
 function getLimit(total: number) {
   total = (total * 15) / 255;

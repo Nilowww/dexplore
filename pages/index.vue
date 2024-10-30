@@ -86,6 +86,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { types, getTypeColor } from "~/utils";
 
 const route = useRoute();
 
@@ -99,26 +100,6 @@ definePageMeta({
   middleware: "authenticated",
 });
 
-const types = [
-  "grass",
-  "poison",
-  "fire",
-  "flying",
-  "water",
-  "bug",
-  "normal",
-  "electric",
-  "ground",
-  "fairy",
-  "fighting",
-  "psychic",
-  "rock",
-  "ice",
-  "dragon",
-  "ghost",
-  "steel",
-  "dark",
-];
 
 const offset = computed(() => (page.value - 1) * 20);
 const totalPage = computed(() => Math.ceil(totalPokemon.value / 20));
@@ -164,48 +145,6 @@ function clearFilter() {
   handleClick();
 }
 
-
-function getTypeColor(type: string): string {
-  switch (type) {
-    case "grass":
-      return "success";
-    case "fire":
-      return "error";
-    case "water":
-      return "primary";
-    case "electric":
-      return "yellow darken-2";
-    case "ice":
-      return "light-blue";
-    case "fighting":
-      return "deep-orange darken-2";
-    case "poison":
-      return "purple darken-2";
-    case "ground":
-      return "brown darken-2";
-    case "flying":
-      return "blue-grey darken-1";
-    case "psychic":
-      return "pink darken-2";
-    case "bug":
-      return "lime darken-3";
-    case "rock":
-      return "orange darken-3";
-    case "ghost":
-      return "indigo darken-4";
-    case "dragon":
-      return "deep-purple darken-4";
-    case "dark":
-      return "grey darken-3";
-    case "steel":
-      return "blue-grey darken-2";
-    case "fairy":
-      return "pink lighten-2";
-    default:
-      return "grey";
-  }
-}
-
 watch(page, () => handleClick());
 watch(
   () => route.query.pokemon,
@@ -244,7 +183,6 @@ onMounted(() => handleClick());
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 56px;
   padding: 0;
   margin-top: 23px;
 }
