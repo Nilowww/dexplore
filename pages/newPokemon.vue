@@ -99,6 +99,7 @@
           </v-col>
           <v-col>
             <v-slider
+              v-model="pokemon.stats[stat]"
               :step="1"
               :max="255"
               :min="0"
@@ -107,6 +108,7 @@
           </v-col>
           <v-col cols="1">
             <v-text-field
+              v-model="pokemon.stats[stat]"
               density="compact"
               style="width: 80px"
               type="number"
