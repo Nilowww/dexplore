@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { debounce, isEmpty } from "lodash-es";
+import _ from 'lodash';
 import { ref, computed, onMounted, watch } from "vue";
 import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
@@ -89,6 +89,9 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import { types, getTypeColor } from "~/utils";
 
 const route = useRoute();
+
+const { isEmpty } = _;
+const { debounce } = _;
 
 const loaded = ref(false);
 const pokemons = ref<IPokemonShort[]>([]);
