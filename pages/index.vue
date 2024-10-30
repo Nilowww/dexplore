@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash';
+import pkg from 'lodash';
 import { ref, computed, onMounted, watch } from "vue";
 import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
@@ -90,8 +90,8 @@ import { types, getTypeColor } from "~/utils";
 
 const route = useRoute();
 
-const { isEmpty } = _;
-const { debounce } = _;
+const { isEmpty } = pkg;
+const { debounce } = pkg;
 
 const loaded = ref(false);
 const pokemons = ref<IPokemonShort[]>([]);

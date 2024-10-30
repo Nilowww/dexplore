@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import type { IList, IPokemonSaved, IPokemonShort } from "~/types/pokemon";
 import { useSupabaseClient, useSupabaseUser } from "#imports";
-import _, { isEmpty } from "lodash";
+import pkg from 'lodash';
+const { isEmpty } = pkg;
 
 export const useFavoritesStore = defineStore("favorites", () => {
   const pokemons = ref<IPokemonShort[]>([]);
