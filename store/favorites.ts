@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import type { IList, IPokemonSaved, IPokemonShort } from "~/types/pokemon";
 import { useSupabaseClient, useSupabaseUser } from "#imports";
 import pkg from 'lodash';
+
 const { isEmpty } = pkg;
 
 export const useFavoritesStore = defineStore("favorites", () => {
@@ -16,33 +17,30 @@ export const useFavoritesStore = defineStore("favorites", () => {
         .select("pokemon_id")
         .eq("user_id", user.value.id);
 
-      console.log(data);
-      const pokemons_ids = data?.map((current) => {
-        return current.pokemon_id;
-      });
-      console.log(pokemons_ids);
-      const params: Record<string, any> = {};
-
-      if (!isEmpty(pokemons_ids)) {
-        params.pokemon_ids = JSON.stringify(pokemons_ids);
-      }
-
-      const response = (await getData(
-        `/pokemon?` + new URLSearchParams(params)
-      )) as IList<IPokemonShort>;
-      pokemons.value = response.results
       if (error) {
-        console.error("Error al cargar favoritos:", error);
+        console.error("Error loading favorites:", error);
+        return;
       }
+
+      const pokemons_ids = data?.map((current) => current.pokemon_id) || [];
+      if (!isEmpty(pokemons_ids)) {
+        const params = new URLSearchParams();
+        params.append('pokemon_ids', JSON.stringify(pokemons_ids));
+
+        const response = await getData(`/pokemon?${params.toString()}`) as IList<IPokemonShort>;
+        pokemons.value = response.results || [];
+      } else {
+        pokemons.value = [];
+      }
+    } else {
+      pokemons.value = [];
     }
   }
 
   async function addPokemons(pokemon: IPokemonShort) {
     if (!user.value) return;
 
-    const pokemonExists = pokemons.value.some(
-      (currentPokemon) => currentPokemon.id === pokemon.id
-    );
+    const pokemonExists = pokemons.value.some((currentPokemon) => currentPokemon.id === pokemon.id);
 
     if (pokemonExists) {
       await removePokemon(pokemon);
@@ -52,7 +50,7 @@ export const useFavoritesStore = defineStore("favorites", () => {
         .insert({ user_id: user.value.id, pokemon_id: pokemon.id });
 
       if (error) {
-        console.error("Error al agregar favorito:", error);
+        console.error("Error adding favorite:", error);
       } else {
         pokemons.value.push(pokemon);
       }
@@ -69,15 +67,15 @@ export const useFavoritesStore = defineStore("favorites", () => {
       .eq("pokemon_id", pokemon.id);
 
     if (error) {
-      console.error("Error al quitar favorito:", error);
+      console.error("Error removing favorite:", error);
     } else {
-      pokemons.value = pokemons.value.filter(
-        (currentPokemon) => pokemon.id !== currentPokemon.id
-      );
+      pokemons.value = pokemons.value.filter((currentPokemon) => pokemon.id !== currentPokemon.id);
     }
   }
 
-  loadFavorites();
+  watch(user, (newUser) => {
+    loadFavorites();
+  }, { immediate: true });
 
-  return { pokemons, addPokemons, removePokemon, loadFavorites };
+  return { pokemons, addPokemons, removePokemon };
 });
