@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { debounce, isEmpty } from "lodash";
+import { debounce, isEmpty } from "lodash-es";
 import { ref, computed, onMounted, watch } from "vue";
 import getData from "~/composables/getData";
 import type { IList, IPokemonShort } from "~/types/pokemon";
