@@ -1,9 +1,8 @@
 <template>
   <div>
-    <v-container>
-      <v-row> </v-row>
-      <v-row>
-        <v-col cols="11">
+    <v-container fluid>
+      <v-row class="mb-4">
+        <v-col cols="10" sm="11">
           <div class="text-center">
             <!-- Search Chips Section -->
             <v-row v-if="showSearch">
@@ -15,6 +14,7 @@
                       'type-chip': isEmpty(selectedType),
                     }"
                     color="black"
+                    class="ma-1"
                   >
                     All
                   </v-chip>
@@ -28,7 +28,7 @@
                         ? 'mdi-checkbox-marked'
                         : 'mdi-checkbox-blank-outline'
                     "
-                    class="type-chip"
+                    class="type-chip ma-1"
                   >
                     {{ type }}
                   </v-chip>
@@ -39,15 +39,15 @@
               v-else-if="loaded && pokemons.length"
               v-model="page"
               :length="totalPage"
-              :total-visible="7"
+              :total-visible="$vuetify.display.smAndDown ? 3 : 7"
               next-icon="mdi-menu-right"
               prev-icon="mdi-menu-left"
               :disabled="!loaded"
-              class="pagination"
+              class="pagination mt-4"
             ></v-pagination>
           </div>
         </v-col>
-        <v-col cols="1">
+        <v-col cols="2" sm="1" class="d-flex justify-end align-center">
           <v-btn
             variant="flat"
             @click="toggleSearch"
@@ -62,7 +62,7 @@
         <v-col v-if="loaded && !pokemons.length" cols="12" class="text-center">
           No pokemons found
         </v-col>
-        <v-col cols="3" v-for="index in 12" :key="index" v-if="!loaded">
+        <v-col cols="6" sm="4" md="3" v-for="index in 12" :key="index" v-if="!loaded">
           <v-skeleton-loader type="card"></v-skeleton-loader>
         </v-col>
         <v-col
@@ -73,7 +73,7 @@
           v-for="pokemon in pokemons"
           :key="pokemon.name"
         >
-        <PokemonCard :pokemon="pokemon" hide-favorites></PokemonCard>
+          <PokemonCard :pokemon="pokemon" hide-favorites></PokemonCard>
         </v-col>
       </v-row>
     </v-container>
@@ -99,7 +99,6 @@ const selectedType = ref<string[]>([]);
 definePageMeta({
   middleware: "authenticated",
 });
-
 
 const offset = computed(() => (page.value - 1) * 20);
 const totalPage = computed(() => Math.ceil(totalPokemon.value / 20));
@@ -157,7 +156,6 @@ onMounted(() => handleClick());
 <style scoped>
 .type-chip {
   border-radius: 12px;
-  margin: 4px;
   display: flex;
   align-items: center;
   padding: 0 12px;
@@ -170,7 +168,6 @@ onMounted(() => handleClick());
 
 .chip-all {
   border-radius: 8px;
-  margin: 4px;
   font-weight: bold;
 }
 
@@ -184,12 +181,21 @@ onMounted(() => handleClick());
   align-items: center;
   justify-content: center;
   padding: 0;
-  margin-top: 23px;
 }
 
 .pagination {
-  margin-top: 20px;
   display: flex;
   justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .type-chip {
+    font-size: 0.8rem;
+    padding: 0 8px;
+  }
+
+  .search-toggle-btn {
+    margin-top: 0;
+  }
 }
 </style>

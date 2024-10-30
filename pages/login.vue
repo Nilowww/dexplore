@@ -1,30 +1,33 @@
 <template>
-  <v-container fluid class="login-container">
-    <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="6" lg="4">
-        <v-card class="login-card" elevation="16">
-          <v-card-title class="text-center">
+  <v-container fluid class="login-container pa-0">
+    <v-row align="center" justify="center" no-gutters>
+      <v-col cols="12" sm="10" md="8" lg="6" xl="4">
+        <v-card class="login-card mx-auto" elevation="16" max-width="100%">
+          <v-card-title class="text-center pt-8">
             <v-img
               src="/assets/pokemon-icon.png"
               contain
               height="80"
+              width="80"
               class="mx-auto"
             />
           </v-card-title>
-          <v-card-subtitle class="text-center mb-4">
-            <h1 class="headline mb-2">Sign In</h1>
-            <p class="subheading">Enter your details to get started</p>
-          </v-card-subtitle>
-          <v-form @submit.prevent="login">
-            <div class="text-field-wrapper">
+          <v-card-text class="text-center pb-0">
+            <h1 class="text-h4 font-weight-bold mb-2">Sign In</h1>
+            <p class="text-subtitle-1">Enter your details to get started</p>
+          </v-card-text>
+          <v-card-text>
+            <v-form @submit.prevent="login">
               <v-text-field
                 v-model="credentials.email"
                 label="Email"
                 type="email"
                 required
                 :rules="[(v: any) => !!v || 'Email is required']"
-                class="login-text-field"
-                prepend-icon="mdi-email"
+                class="login-text-field mb-4"
+                prepend-inner-icon="mdi-email"
+                variant="outlined"
+                density="comfortable"
               />
               <v-text-field
                 v-model="credentials.password"
@@ -32,46 +35,50 @@
                 label="Password"
                 required
                 :rules="[(v: any) => !!v || 'Password is required']"
-                class="login-text-field"
-                prepend-icon="mdi-lock"
-                :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                @click:append="togglePasswordVisibility"
+                class="login-text-field mb-4"
+                prepend-inner-icon="mdi-lock"
+                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append-inner="togglePasswordVisibility"
+                variant="outlined"
+                density="comfortable"
               />
-            </div>
-            <v-alert
-              v-if="errorMessage"
-              type="error"
-              class="mb-4"
-              border="start"
-              colored-border
-            >
-              {{ errorMessage }}
-            </v-alert>
-            <v-checkbox v-model="rememberMe" label="Remember Me" class="mb-4" />
-            <v-btn
-              type="submit"
-              :loading="loading"
-              color="primary"
-              block
-              class="submit-btn"
-            >
-              Sign In
-            </v-btn>
-            <v-divider class="my-4" />
-            <v-row>
-              <v-col class="text-center">
-                <p class="text-body-2">
-                  Don't have an account?
-                  <nuxt-link
-                    to="/register"
-                    class="font-weight-bold text-primary"
-                  >
-                    Sign Up
-                  </nuxt-link>
-                </p>
-              </v-col>
-            </v-row>
-          </v-form>
+              <v-alert
+                v-if="errorMessage"
+                type="error"
+                class="mb-4"
+                variant="tonal"
+                density="comfortable"
+              >
+                {{ errorMessage }}
+              </v-alert>
+              <v-checkbox
+                v-model="rememberMe"
+                label="Remember Me"
+                class="mb-4"
+                hide-details
+              />
+              <v-btn
+                type="submit"
+                :loading="loading"
+                color="primary"
+                block
+                class="submit-btn mb-4"
+                size="large"
+              >
+                Sign In
+              </v-btn>
+              <v-divider class="mb-4" />
+              <p class="text-body-2 text-center">
+                Don't have an account?
+                <nuxt-link
+                  to="/register"
+                  class="font-weight-bold text-primary text-decoration-none"
+                >
+                  Sign Up
+                </nuxt-link>
+              </p>
+            </v-form>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -143,77 +150,15 @@ const login = async () => {
   animation: fadeIn 0.5s ease-out;
 }
 
-.v-card-title .headline {
-  font-weight: bold;
-  color: #333;
-}
-
-.v-card-subtitle .subheading {
-  color: #555;
-}
-
-.text-field-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.login-text-field {
-  border-radius: 8px;
-  margin-bottom: 16px;
-  width: 100%;
-  transition: box-shadow 0.1s ease;
-}
-
-.login-text-field .v-input__control {
-  border-radius: 8px;
-}
-
-.login-text-field .v-input__control,
-.login-text-field input {
-  height: 56px;
-}
-
-.login-text-field:hover .v-input__control {
-  box-shadow: 0 0 0 2px #0072ff;
-}
-
 .submit-btn {
-  border-radius: 8px;
   font-weight: bold;
   text-transform: uppercase;
-  max-width: 200px;
-  margin: 0 auto;
   transition: background-color 0.1s ease, transform 0.1s ease;
 }
 
 .submit-btn:hover {
   background-color: #005bb5;
   transform: translateY(-2px);
-}
-
-.v-alert {
-  border-radius: 8px;
-}
-
-.v-divider {
-  margin: 1rem 0;
-}
-
-.font-weight-bold {
-  font-weight: 600;
-}
-
-.text-primary {
-  color: #0072ff;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-body-2 {
-  font-size: 0.875rem;
-  color: #555;
 }
 
 @keyframes fadeIn {
@@ -224,6 +169,21 @@ const login = async () => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .login-card {
+    padding: 16px;
+    margin: 16px;
+  }
+
+  .v-card-title {
+    padding-top: 16px !important;
+  }
+
+  .v-card-text {
+    padding: 16px !important;
   }
 }
 </style>
