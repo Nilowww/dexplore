@@ -7,6 +7,7 @@ const { isEmpty } = pkg;
 
 export const useFavoritesStore = defineStore("favorites", () => {
   const pokemons = ref<IPokemonShort[]>([]);
+  const filteredPokemons = ref<IPokemonShort[]>([]);
   const supabase = useSupabaseClient<{ favorites: IPokemonSaved }>();
   const user = useSupabaseUser();
 
@@ -29,11 +30,14 @@ export const useFavoritesStore = defineStore("favorites", () => {
 
         const response = await getData(`/pokemon?${params.toString()}`) as IList<IPokemonShort>;
         pokemons.value = response.results || [];
+        filteredPokemons.value = pokemons.value;
       } else {
         pokemons.value = [];
+        filteredPokemons.value = [];
       }
     } else {
       pokemons.value = [];
+      filteredPokemons.value = [];
     }
   }
 
@@ -53,6 +57,7 @@ export const useFavoritesStore = defineStore("favorites", () => {
         console.error("Error adding favorite:", error);
       } else {
         pokemons.value.push(pokemon);
+        filteredPokemons.value = pokemons.value;
       }
     }
   }
@@ -70,6 +75,18 @@ export const useFavoritesStore = defineStore("favorites", () => {
       console.error("Error removing favorite:", error);
     } else {
       pokemons.value = pokemons.value.filter((currentPokemon) => pokemon.id !== currentPokemon.id);
+      filteredPokemons.value = filteredPokemons.value.filter((currentPokemon) => pokemon.id !== currentPokemon.id);
+    }
+  }
+
+  function filterFavorites(searchTerm: string) {
+    if (!searchTerm) {
+      filteredPokemons.value = pokemons.value;
+    } else {
+      const lowercaseSearch = searchTerm.toLowerCase();
+      filteredPokemons.value = pokemons.value.filter(pokemon => 
+        pokemon.name.toLowerCase().includes(lowercaseSearch)
+      );
     }
   }
 
@@ -77,5 +94,5 @@ export const useFavoritesStore = defineStore("favorites", () => {
     loadFavorites();
   }, { immediate: true });
 
-  return { pokemons, addPokemons, removePokemon };
+  return { pokemons, filteredPokemons, addPokemons, removePokemon, filterFavorites };
 });

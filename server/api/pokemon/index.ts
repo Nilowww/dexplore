@@ -42,12 +42,13 @@ const types = [
   "dark",
 ]
 
+
 export default defineEventHandler(async (event) => {
   const params = getQuery(event);
   const query = `query getPokemons($offset: Int, $name: String = "%%", $type: [String!]${params.pokemon_ids ? ', $pokemon_id: [Int!]' : ''}) {
     count: pokemon_v2_pokemon_aggregate(
       where: {
-        name: {_like: $name},
+        name: {_ilike: $name},
         ${params.pokemon_ids ? 'id: { _in: $pokemon_id },' : ''}
         pokemon_v2_pokemontypes: {
           pokemon_v2_type: {
@@ -65,7 +66,7 @@ export default defineEventHandler(async (event) => {
       offset: $offset,
       where: {
         ${params.pokemon_ids ? 'id: { _in: $pokemon_id },' : ''}
-        name: {_like: $name},
+        name: {_ilike: $name},
         pokemon_v2_pokemontypes: {
           pokemon_v2_type: {
             name: {_in: $type} 
