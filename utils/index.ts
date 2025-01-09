@@ -109,3 +109,8 @@ export const stats = [
   "special-defense",
   "speed",
 ];
+
+export const rules = {
+  isRequired: (v?: string | any[] | null) => Boolean( String (v)?.length) || 'This field is required',
+  isNumber: (v: any) => !isNaN(parseFloat(v)) && isFinite(v) || 'This field must be a number',
+}

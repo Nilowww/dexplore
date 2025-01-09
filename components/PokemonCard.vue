@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="String(pokemon.id)" class="text-decoration-none">
+  <NuxtLink :to="pokemon.id > -1 ? String(pokemon.id) : undefined" class="text-decoration-none">
     <v-card
       class="pokemon-card pb-3"
       :class="{ plain: plain }"

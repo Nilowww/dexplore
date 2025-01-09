@@ -20,7 +20,7 @@ export interface IPokemon extends IPokemonShort {
   base_experience: number;
   weight: number;
   abilities: IAbilityShort[];
-  species: ISpeciesShort;
+  species?: ISpeciesShort;
   moves: IMovesShort[];
   stats: IPokemonStat[];
 }
@@ -82,3 +82,5 @@ export interface IPokemonStat {
     id: number;
   }
 }
+
+export type WithUser<T> = T &  { user_id: string };

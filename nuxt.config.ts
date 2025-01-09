@@ -6,7 +6,6 @@ export default defineNuxtConfig({
   css: ["./assets/css/main.scss"],
   build: {
     transpile: ["vuetify", "lodash-es"],
-
   },
   modules: [
     [
@@ -16,6 +15,7 @@ export default defineNuxtConfig({
       },
     ],
     "@pinia/nuxt",
+    "@ant-design-vue/nuxt",
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
         // @ts-expect-error
