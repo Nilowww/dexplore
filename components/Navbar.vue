@@ -63,6 +63,17 @@ function toggleDrawer() {
           }
         "
       ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-pokemon-go"
+        title="My Pokemons"
+        value="myPokemons"
+        @click="
+          () => {
+            toggleDrawer();
+            router.push('/myPokemons');
+          }
+        "
+      ></v-list-item>
     </v-list>
 
     <template v-slot:append>

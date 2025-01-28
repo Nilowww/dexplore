@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="pokemon.id > -1 ? String(pokemon.id) : undefined" class="text-decoration-none">
+  <NuxtLink :to="isCustomPokemon(pokemon) ? '/myPokemons/' + String(pokemon.id) : String(pokemon.id)" class="text-decoration-none">
     <v-card
       class="pokemon-card pb-3"
       :class="{ plain: plain }"
@@ -11,7 +11,7 @@
         class="position-absolute top-0 left-0"
         style="z-index: 2"
       >
-        <FavoriteStar :pokemon="pokemon" />
+        <FavoriteStar v-if="!isCustomPokemon(pokemon)" :pokemon="pokemon" />
       </div>
       <v-container class="pokemon-img">
         <v-hover>
@@ -52,11 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import type { IPokemonShort } from "~/types/pokemon";
+import type { ICustomPokemon, IPokemon, IPokemonShort } from "~/types/pokemon";
 import FavoriteStar from "./buttons/FavoriteStar.vue";
 
 const props = defineProps<{
-  pokemon: IPokemonShort;
+  pokemon: ICustomPokemon|IPokemonShort;
   hideFavorites?: boolean;
   plain?: boolean;
   hideTypes?: boolean;
@@ -64,6 +64,10 @@ const props = defineProps<{
   titleSize?: boolean;
   animated?: boolean;
 }>();
+
+const isCustomPokemon = (pokemon: ICustomPokemon | IPokemonShort): pokemon is ICustomPokemon => {
+  return pokemon.hasOwnProperty('user_id')
+}
 
 function getTypeIcon(type: string): string {
   const typeIcons: Record<string, string> = {

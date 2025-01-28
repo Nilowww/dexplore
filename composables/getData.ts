@@ -8,12 +8,11 @@ interface FetchError {
   statusText: string;
 }
 
-type IResponse = {
-  [key: string]: any;
-  error: never;
+type IResponse<T> = T & {
+  error: undefined;
 }
 
-export default async function getData(url: string, options?: Parameters<typeof $fetch>[1]): Promise<IResponse | { error: FetchError }> {
+export default async function getData<T>(url: string, options?: Parameters<typeof $fetch>[1]): Promise<IResponse<T> | { error: FetchError }> {
   try {
     const fetcher = $fetch.create({
       baseURL: useRuntimeConfig().public.baseURL || "https://www.example.com",

@@ -84,3 +84,5 @@ export interface IPokemonStat {
 }
 
 export type WithUser<T> = T &  { user_id: string };
+
+export type ICustomPokemon = WithUser<Omit<IPokemon, "id"> & Partial<Pick<IPokemon, "id">>>;

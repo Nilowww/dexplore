@@ -1,4 +1,4 @@
-import { IList, IPokemon, IPokemonShort } from "~/types/pokemon";
+import { IPokemon } from "~/types/pokemon";
 import { IPokemonGQLResponse } from "~/types/responses";
 import { fetchGraphQL } from "~/utils/server";
 

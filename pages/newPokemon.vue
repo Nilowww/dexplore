@@ -279,7 +279,7 @@ async function submitForm() {
   const validateValue = await pokemonForm.value?.validate();
 
   if (validateValue?.valid) {
-    const response = await getData(`/pokemon?` + new URLSearchParams(), {
+    const response = await getData(`/my-pokemons?` + new URLSearchParams(), {
       method: "POST",
       body: JSON.stringify(pokemon.value),
     });

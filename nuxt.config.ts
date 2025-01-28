@@ -23,7 +23,7 @@ export default defineNuxtConfig({
       });
     },
     "@nuxtjs/supabase",
-  ],
+  ],  
   vite: {
     vue: {
       template: {

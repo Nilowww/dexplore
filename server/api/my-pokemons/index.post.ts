@@ -1,7 +1,6 @@
 import { defineEventHandler, readBody } from "h3";
 import { serverSupabaseClient } from "#supabase/server";
-import { IPokemon, WithUser } from "~/types/pokemon";
-type ICustomPokemon = WithUser<Omit<IPokemon, "id">>;
+import { ICustomPokemon, IPokemon, WithUser } from "~/types/pokemon";
 
 export default defineEventHandler(async (event) => {
   const body: IPokemon = await readBody(event);
