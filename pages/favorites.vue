@@ -31,6 +31,17 @@
 <script setup lang="ts">
 import { useFavoritesStore } from "~/store/favorites";
 
+useHead({
+  title: 'Dexplore | Favorites',
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }
+  ]
+})
+
 const favoriteStore = useFavoritesStore();
 
 const filteredFavoritePokemons = computed(() => favoriteStore.filteredPokemons);

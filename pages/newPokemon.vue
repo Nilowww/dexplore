@@ -217,6 +217,17 @@ import type {
 import { types, getTypeColor, getStatsColor } from "~/utils";
 import { message } from "ant-design-vue";
 
+useHead({
+  title: 'Dexplore | Add pokemon',
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }
+  ]
+})
+
 const pokemonForm = ref<InstanceType<typeof VForm> | null>(null);
 const image = ref<File[]>();
 const pokemon = ref<IPokemon>({

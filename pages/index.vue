@@ -88,6 +88,17 @@
   import "@fortawesome/fontawesome-free/css/all.css";
   import { types, getTypeColor } from "~/utils";
 
+  useHead({
+  title: 'Dexplore | Home',
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }
+  ]
+})
+
   const route = useRoute();
 
   const { isEmpty } = pkg;

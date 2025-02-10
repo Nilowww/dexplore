@@ -96,6 +96,17 @@ const credentials = reactive({
   password: "",
 });
 
+useHead({
+  title: 'Dexplore | Login',
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }
+  ]
+})
+
 const rememberMe = ref(false);
 const loading = ref(false);
 const errorMessage = ref("");

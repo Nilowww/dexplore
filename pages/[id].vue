@@ -130,6 +130,17 @@ import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getStatsColor } from "~/utils";
 
+useHead({
+  title: 'Dexplore | Details',
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }
+  ]
+})
+
 const route = useRoute();
 const router = useRouter();
 const pokemon = ref<IPokemon | null>(null);

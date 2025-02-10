@@ -98,6 +98,17 @@ import { navigateTo } from "nuxt/app";
 
 const supaAuth = useSupabaseClient().auth;
 
+useHead({
+  title: 'Dexplore | Sign Up',
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }
+  ]
+})
+
 const credentials = reactive({
   email: "",
   password: "",

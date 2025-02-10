@@ -26,6 +26,17 @@
 <script setup lang="ts">
 import type { ICustomPokemon, IList } from "~/types/pokemon";
 
+useHead({
+  title: 'Dexplore | My pokemons',
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }
+  ]
+})
+
 const pokemons = ref<Required<ICustomPokemon>[]>([]);
 const loaded = ref(false);
 
