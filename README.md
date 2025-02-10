@@ -48,6 +48,10 @@ SUPABASE_URL=your-supabase-url
 SUPABASE_ANON_KEY=your-anon-key
 ```
 
+## Demo
+
+[Online Demo](https://dexplore.netlify.app/)
+
 ## 🛠️ Development Tools
 
 This project uses **Nuxt DevTools** for better debugging and development experience.
